@@ -15,12 +15,12 @@
 | Experimental Condition | Metric | Mean ± StdDev | Parametric Normal 95% CI | Non-Parametric Bootstrap 95% CI | Raw Count / Threshold |
 |---|---|---|---|---|---|
 | **A → A (Familiar Baseline)** | Tracking Error $E(t)$ | 0.0050 ± 0.0000 | [0.0050, 0.0050] | [0.0050, 0.0050] | 50/50 (100.0%) |
-| **A → B (Zero-Shot Novel B)** | Mean Shock Error $E(t)$ | 1.3079 ± 0.0421 | [1.2963, 1.3196] | [1.2968, 1.3197] | Zero-Shot Transfer Barrier |
-| **A → C (Zero-Shot Radical C)** | Mean Shock Error $E(t)$ | 0.8117 ± 0.0272 | [0.8042, 0.8192] | [0.8042, 0.8194] | Zero-Shot Transfer Barrier |
-| **A → B → B' (Adaptation)** | Initial Shock $E(0)$ | 1.8491 ± 0.3356 | [1.7561, 1.9422] | [1.7603, 1.9404] | Pre-adaptation shock ($t=1$) |
+| **A → B (Zero-Shot Novel B)** | Mean Shock Error $E(t)$ | 1.3079 ± 0.0421 | [1.2963, 1.3196] | [1.2968, 1.3195] | Zero-Shot Transfer Barrier |
+| **A → C (Zero-Shot Radical C)** | Mean Shock Error $E(t)$ | 0.8117 ± 0.0272 | [0.8042, 0.8192] | [0.8041, 0.8191] | Zero-Shot Transfer Barrier |
+| **A → B → B' (Adaptation)** | Initial Shock $E(0)$ | 1.8491 ± 0.3356 | [1.7561, 1.9422] | [1.7578, 1.9428] | Pre-adaptation shock ($t=1$) |
 | **A → B → B' (Adaptation)** | Polarity Flip Latency | 7.00 ± 0.00 steps | [7.00, 7.00] | [7.00, 7.00] | Evidence $\Lambda_t < -0.50$ |
-| **A → B → B' (Adaptation)** | Latency $T_\epsilon$ ($E < 0.20$) | 16.32 ± 0.62 steps | [16.15, 16.49] | [16.16, 16.48] | **50/50 seeds (100.0%)** |
-| **A → B → B' (Adaptation)** | Rate $A_{adapt} = \frac{E(0)-E(T)}{B}$ | 0.0461 ± 0.0084 | [0.0438, 0.0485] | [0.0438, 0.0485] | **50/50 seeds (100.0%)** |
+| **A → B → B' (Adaptation)** | Latency $T_\epsilon$ ($E < 0.20$) | 16.32 ± 0.62 steps | [16.15, 16.49] | [16.14, 16.50] | **50/50 seeds (100.0%)** |
+| **A → B → B' (Adaptation)** | Rate $A_{adapt} = \frac{E(0)-E(T)}{B}$ | 0.0461 ± 0.0084 | [0.0438, 0.0485] | [0.0439, 0.0484] | **50/50 seeds (100.0%)** |
 | **A → B → B' (Adaptation)** | Final Error $E(T)$ ($T=40$) | 0.0040 ± 0.0010 | [0.0037, 0.0043] | [0.0037, 0.0043] | **50/50 seeds (100.0%)** |
 
 ---

@@ -10,9 +10,17 @@ Builds:
 import os
 import subprocess
 import shutil
+import base64
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 FIGURES_DIR = os.path.join(BASE_DIR, "figures")
+
+def get_image_b64(rel_path):
+    full_path = os.path.join(BASE_DIR, rel_path)
+    if os.path.exists(full_path):
+        with open(full_path, "rb") as img_f:
+            return f"data:image/png;base64,{base64.b64encode(img_f.read()).decode('utf-8')}"
+    return rel_path
 ARTIFACTS_DIR = "/Users/kunallubhana/.gemini/antigravity-ide/brain/67fcba34-ddfa-4033-908f-2b1894c58996"
 
 ARCHIVE_DRAFTS_DIR = os.path.join(BASE_DIR, "archive", "legacy_drafts")
@@ -695,6 +703,16 @@ Output : Next state prediction s_hat_{t+1}, updated parameters Theta_{t+1}
 </body>
 </html>
 """
+    fig1_b64 = get_image_b64("figures/fig1_system_architecture.png")
+    fig2_b64 = get_image_b64("figures/fig2_cross_world_adaptation.png")
+    fig3_b64 = get_image_b64("figures/fig3_continual_retention.png")
+    fig4_b64 = get_image_b64("figures/fig4_hypothesis_survival_analysis.png")
+
+    html_content = html_content.replace('src="figures/fig1_system_architecture.png"', f'src="{fig1_b64}"')
+    html_content = html_content.replace('src="figures/fig2_cross_world_adaptation.png"', f'src="{fig2_b64}"')
+    html_content = html_content.replace('src="figures/fig3_continual_retention.png"', f'src="{fig3_b64}"')
+    html_content = html_content.replace('src="figures/fig4_hypothesis_survival_analysis.png"', f'src="{fig4_b64}"')
+
     with open(HTML_PATH, "w") as f:
         f.write(html_content)
     print(f"Generated v2.1 HTML: {HTML_PATH}")
@@ -709,9 +727,10 @@ def compile_pdf():
         edge_bin,
         "--headless",
         "--disable-gpu",
+        "--allow-file-access-from-files",
         "--no-pdf-header-footer",
         "--run-all-compositor-stages-before-draw",
-        "--virtual-time-budget=6000",
+        "--virtual-time-budget=8000",
         f"--print-to-pdf={PDF_PATH}",
         HTML_PATH
     ]
