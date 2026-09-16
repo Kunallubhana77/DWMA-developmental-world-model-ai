@@ -7,14 +7,14 @@ Subject: Submission of Original Research Manuscript: "DWMA: Autonomous Sensorimo
 
 Dear Editors,
 
-I am pleased to submit our original research manuscript titled "DWMA: Autonomous Sensorimotor Structure Acquisition, Multi-Schema Retention, and Active Hypothesis Discrimination in an Embodied World Model" for consideration as a regular research article in Cognitive Systems Research.
+I am pleased to submit my original research manuscript titled "DWMA: Autonomous Sensorimotor Structure Acquisition, Multi-Schema Retention, and Active Hypothesis Discrimination in an Embodied World Model" for consideration as a regular research article in Cognitive Systems Research.
 
 Research Question & Thematic Fit:
 Contemporary artificial intelligence architectures increasingly rely on massive, static training corpora and autoregressive sequence prediction over symbolic tokens. However, biological developmental cognition reveals that intelligent agents acquire physical intuition through active, grounded sensorimotor manipulation, reafference cancellation, and hypothesis-directed play. 
 
 In this work, we investigate the fundamental cognitive question: Can an unprivileged embodied agent autonomously acquire, maintain, and adaptively update predictive structure about an interactive dynamical environment while actively discriminating competing physical hypotheses—without relying on Large Language Models or privileged simulator state?
 
-Because Cognitive Systems Research explicitly emphasizes cognitive architectures, developmental systems, computational cognitive modeling, and sensorimotor learning, we believe our unified embodied architecture will be of strong interest to the journal's readership.
+Because Cognitive Systems Research explicitly emphasizes cognitive architectures, developmental systems, computational cognitive modeling, and sensorimotor learning, we believe the unified embodied architecture will be of strong interest to the journal's readership.
 
 Key Empirical Contributions:
 1. Online Structure Acquisition & Baseline Verification: An unprivileged predictive forward model operating via recursive parameter estimation and motor reafference cancellation, achieving an 8.8x forecasting MSE reduction over persistence across 7 baseline benchmarks (Cohen's d = 11.45).
@@ -24,7 +24,7 @@ Key Empirical Contributions:
 5. Sensitivity & Architectural Ablations: Systematic ablations characterizing the functional roles of directional EMA filtering, discrete schema retention, and epistemic action selection in preventing specific operational failure modes.
 
 Preprint & Reproducibility Disclosure:
-In accordance with Elsevier's open preprint sharing policy, a preliminary version of this preprint has been archived for priority and provenance on Zenodo (DOI: 10.5281/zenodo.22796871). The manuscript submitted here represents the full, peer-reviewed journal formulation with calibrated scientific claims, expanded architectural exposition, and comprehensive methodological details. 
+In accordance with Elsevier's open preprint sharing policy, a preliminary version of this preprint has been archived for priority and provenance on Zenodo (DOI: 10.5281/zenodo.22796871). The manuscript submitted here represents the full journal-submission formulation, with calibrated scientific claims, expanded architectural exposition, and comprehensive methodological details. 
 
 To ensure complete scientific reproducibility, all source code, 50-seed deterministic trajectory data, evaluation configurations, and turnkey reproduction scripts (reproduce_all.py) are publicly accessible.
 

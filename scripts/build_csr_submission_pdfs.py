@@ -110,7 +110,7 @@ def build_title_page():
 <p>This research did not receive any specific grant from funding agencies in the public, commercial, or not-for-profit sectors. It was conducted as an independent research investigation.</p>
 
 <div class="section-title">Declaration of Generative AI in Scientific Writing</div>
-<p>During the preparation of this manuscript, the author used generative AI models solely for editorial grammar refinement, stylistic readability polishing, and script formatting under rigorous, continuous human oversight. After using these assistance tools, the author independently reviewed and edited all content and takes full personal responsibility for the factual integrity and scientific claims of this publication.</p>
+<p>During the preparation of this work, the author utilized generative AI and AI-assisted tools (including deep research assistants and large language models) for drafting, restructuring, editorial refinement, LaTeX formatting, and assistance with Python reproduction scripts under continuous human direction and oversight. Following the use of these tools, the author independently audited, executed, validated, and edited all empirical code, mathematical formulations, figure visualizations, and manuscript text. The author assumes full personal responsibility for the factual validity, scientific integrity, and conclusions presented in this publication.</p>
 
 <div class="section-title">Acknowledgements</div>
 <p>The author acknowledges and thanks the open-source scientific computing ecosystem (Python, NumPy, SciPy, Matplotlib) whose open libraries made the simulation and analysis possible.</p>
@@ -139,7 +139,7 @@ def build_anonymized_manuscript():
     # Add Generative AI declaration before References
     ai_decl = """
     <h2>Declaration of Generative AI and AI-Assisted Technologies</h2>
-    <p>During the preparation of this work, the author used generative AI models solely for initial editorial styling, grammar refinement, and code structuring assistance under direct human oversight. After using these tools, the author reviewed and edited the content and takes full responsibility for the content of the publication.</p>
+    <p>During the preparation of this work, the author utilized generative AI and AI-assisted tools (including deep research assistants and large language models) for drafting, restructuring, editorial refinement, LaTeX formatting, and assistance with Python reproduction scripts under continuous human direction and oversight. Following the use of these tools, the author independently audited, executed, validated, and edited all empirical code, mathematical formulations, figure visualizations, and manuscript text. The author assumes full personal responsibility for the factual validity, scientific integrity, and conclusions presented in this publication.</p>
     """
     if "<h2>10. References</h2>" in content:
         content = content.replace("<h2>10. References</h2>", ai_decl + "\n<h2>10. References</h2>")
