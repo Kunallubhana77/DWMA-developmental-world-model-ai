@@ -101,8 +101,6 @@ Open **[http://localhost:5173/](http://localhost:5173/)** in your browser.
 
 - **📄 Academic Paper PDF (v2.1):** [DWMA_Research_Paper_Preprint_v2.1.pdf](DWMA_Research_Paper_Preprint_v2.1.pdf) *(Camera-Ready)*
 - **📝 Two-Column LaTeX Source:** [DWMA_Research_Paper_Preprint_v2.1.tex](DWMA_Research_Paper_Preprint_v2.1.tex) *(arXiv / Overleaf ready)*
-- **📖 Full Preprint Manuscript:** [DWMA_Research_Paper_Preprint_v2.1.md](DWMA_Research_Paper_Preprint_v2.1.md)
-- **🌐 HTML Preprint:** [DWMA_Research_Paper_Preprint_v2.1.html](DWMA_Research_Paper_Preprint_v2.1.html)
 - **📊 300 DPI Publication Figures:** [figures/](figures/)
   - `fig1_system_architecture.png`: Closed-loop architecture schematic.
   - `fig2_cross_world_adaptation.png`: Phase 2 online adaptation trajectory.

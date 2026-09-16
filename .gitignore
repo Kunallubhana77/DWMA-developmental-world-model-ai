@@ -19,3 +19,10 @@ Thumbs.db
 test.pdf
 test_math.pdf
 test_math.html
+
+# Paper HTML/MD drafts
+DWMA_Research_Paper_Preprint_*.html
+DWMA_Research_Paper_Preprint_*.md
+archive/legacy_drafts/*.html
+archive/legacy_drafts/*.md
+dwma_scientific_evaluation_protocol_*.md

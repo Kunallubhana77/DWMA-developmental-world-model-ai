@@ -12,11 +12,11 @@
 | Architecture Condition | Metric | Mean ± StdDev | Parametric Normal 95% CI | Non-Parametric Bootstrap 95% CI | Threshold / Success Count |
 |---|---|---|---|---|---|
 | **World A1 Baseline** | Tracking Error $E_{A1}$ | 0.00500 ± 0.00008 | [0.00498, 0.00502] | [0.00498, 0.00502] | Initial Baseline |
-| **World B Adaptation** | Mean Error $E_B$ | 0.38033 ± 0.05043 | [0.36635, 0.39431] | [0.36720, 0.39480] | Dynamic Adaptation |
+| **World B Adaptation** | Mean Error $E_B$ | 0.38033 ± 0.05043 | [0.36635, 0.39431] | [0.36725, 0.39471] | Dynamic Adaptation |
 | **Full DWMA (Return to A2)** | Return Error $E_{A2}$ | 0.00501 ± 0.00007 | [0.00499, 0.00503] | [0.00499, 0.00503] | Retained Schema ($E_{A2} \approx E_{A1}$) |
-| **Full DWMA (Continual)** | Retention Rate $R$ | **0.9901 ± 0.0141** | [0.9862, 0.9940] | [0.9859, 0.9937] | **50/50 seeds (100.0%) [PASS]** |
-| **Ablated Overwriter** | Return Error $E_{A2}$ | 0.37460 ± 0.03032 | [0.36619, 0.38300] | [0.36632, 0.38287] | Catastrophic Interference |
-| **Ablated Overwriter** | Retention Rate $R$ | **-72.9726 ± 6.4245** | [-74.7534, -71.1918] | [-74.7374, -71.2291] | **0/50 seeds (0.0%) [FAIL]** |
+| **Full DWMA (Continual)** | Retention Rate $R$ | **0.9901 ± 0.0141** | [0.9862, 0.9940] | [0.9860, 0.9937] | **50/50 seeds (100.0%) [PASS]** |
+| **Ablated Overwriter** | Return Error $E_{A2}$ | 0.37460 ± 0.03032 | [0.36619, 0.38300] | [0.36632, 0.38309] | Catastrophic Interference |
+| **Ablated Overwriter** | Retention Rate $R$ | **-72.9726 ± 6.4245** | [-74.7534, -71.1918] | [-74.7312, -71.2725] | **0/50 seeds (0.0%) [FAIL]** |
 
 ---
 

@@ -15,10 +15,13 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 FIGURES_DIR = os.path.join(BASE_DIR, "figures")
 ARTIFACTS_DIR = "/Users/kunallubhana/.gemini/antigravity-ide/brain/67fcba34-ddfa-4033-908f-2b1894c58996"
 
+ARCHIVE_DRAFTS_DIR = os.path.join(BASE_DIR, "archive", "legacy_drafts")
+os.makedirs(ARCHIVE_DRAFTS_DIR, exist_ok=True)
+
 TEX_PATH = os.path.join(BASE_DIR, "DWMA_Research_Paper_Preprint_v2.1.tex")
-HTML_PATH = os.path.join(BASE_DIR, "DWMA_Research_Paper_Preprint_v2.1.html")
+HTML_PATH = os.path.join(ARCHIVE_DRAFTS_DIR, "DWMA_Research_Paper_Preprint_v2.1.html")
 PDF_PATH = os.path.join(BASE_DIR, "DWMA_Research_Paper_Preprint_v2.1.pdf")
-MD_PATH = os.path.join(BASE_DIR, "DWMA_Research_Paper_Preprint_v2.1.md")
+MD_PATH = os.path.join(ARCHIVE_DRAFTS_DIR, "DWMA_Research_Paper_Preprint_v2.1.md")
 
 def generate_latex():
     tex_content = r"""\documentclass[10pt,twocolumn,a4paper]{article}

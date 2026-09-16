@@ -100,10 +100,8 @@ def main():
   Total Pipeline Runtime: {elapsed_total:.2f}s
   
   Verified Artifacts:
-  - Markdown Manuscript : DWMA_Research_Paper_Preprint_v2.1.md
   - Compiled PDF Paper  : DWMA_Research_Paper_Preprint_v2.1.pdf (1.61 MB)
   - Two-Column LaTeX    : DWMA_Research_Paper_Preprint_v2.1.tex
-  - HTML Preprint       : DWMA_Research_Paper_Preprint_v2.1.html
   - Ablation Results    : experiments/sensitivity_ablation_summary.csv
   - Publication Figures : figures/ (fig1 to fig4)
   - Citation Metadata   : citation.bib
