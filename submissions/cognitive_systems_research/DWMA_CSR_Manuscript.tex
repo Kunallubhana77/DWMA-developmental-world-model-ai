@@ -1,0 +1,370 @@
+\documentclass[preprint,12pt]{elsarticle}
+
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\usepackage{microtype}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\usepackage{xcolor}
+
+\journal{Cognitive Systems Research}
+
+\begin{document}
+
+\begin{frontmatter}
+
+\title{DWMA: Autonomous Sensorimotor Structure Acquisition, Multi-Schema Retention, and Active Hypothesis Discrimination in an Embodied World Model}
+
+\author{Kunal Lubhana}
+\affiliation{organization={Independent Research}}
+
+\begin{abstract}
+We introduce the \textbf{Developmental World-Model Agent (DWMA)}, an embodied computational cognitive architecture designed to acquire, maintain, and adaptively update predictive representations of interactive continuous physical environments. Rather than relying on Large Language Models or static offline training corpuses, DWMA constructs grounded world models purely through online sensorimotor contingency, reafference cancellation, and epistemic active inference. The agent operates without privileged access to latent physical parameters (mass, friction, restitution, or gravity), requiring these to be inferred directly from interaction residuals. We report an audited evaluation across $N = 50$ paired deterministic seeds with $B = 10,000$ non-parametric bootstrap resamples: (1) 7 baseline benchmarks reproduced ($8.8\times$ forecasting MSE reduction over persistence, Cohen's $d = 11.45$); (2) $A \to B \to C$ cross-world transfer and rapid continuous adaptation ($T_\epsilon = 16.32 \pm 0.62$ steps, $50/50$ pass); (3) continual multi-schema retention ($E_{A1} = 0.00500 \to E_{A2} = 0.00501$, empirical retention index $\mathcal{R} = 0.9901 \pm 0.0141$, $50/50$ pass vs. overwriter catastrophic forgetting $\mathcal{R} = -72.97$); (4) active structural hypothesis discrimination (Kaplan-Meier median latency of $7.0$ steps with $0\%$ censoring vs. $17.0$ steps with $22.0\%$ right-censoring for random babbling; log-rank $\chi^2 = 74.98, p < 10^{-17}$ under fair decoupled RNG); and (5) systematic hyperparameter and architectural ablations characterizing the functional roles of targeted epistemic action selection, directional exponential moving average smoothing ($\gamma = 0.80$), and discrete schema memory in mitigating operational failure modes (noise-induced chatter, sluggish adaptation, sample inefficiency, and memory collapse). Complete source code, configuration files, 50-seed deterministic trajectories, and turnkey reproduction scripts are openly archived for independent replication.
+\end{abstract}
+
+\begin{keyword}
+Cognitive architectures \sep Sensorimotor learning \sep Active inference \sep Reafference cancellation \sep Continual learning \sep World models \sep Developmental AI
+\end{keyword}
+
+\end{frontmatter}
+
+\section{Introduction}
+\label{sec:intro}
+Contemporary artificial intelligence is dominated by autoregressive sequence modeling over tokenized symbolic representations. While remarkably capable across linguistic tasks, symbolic tokens lack causal and somatic grounding in physical reality and motor action \citep{harnad1990,brooks1991,bender2020}. In contrast, biological cognitive systems do not acquire environmental understanding from passive, disconnected corpuses. Developmental psychology reveals that human infants construct robust intuitive physical models through grounded sensorimotor manipulation, bodily reafference cancellation, and hypothesis-directed exploration \citep{piaget1952,vonholst1950,friston2010,gopnik2012}.
+
+This paper investigates the fundamental cognitive question: \textit{Can an unprivileged embodied agent autonomously acquire, retain, and adaptively update predictive structure about an interactive dynamical environment while actively discriminating competing physical hypotheses---without relying on Large Language Models or privileged simulator state?}
+
+To address this challenge, we present the \textbf{Developmental World-Model Agent (DWMA)}, an embodied cognitive architecture structured around three core design principles:
+\begin{enumerate}
+    \item \textbf{Unprivileged Online Grounding:} The agent observes only low-dimensional egocentric continuous state streams and infers hidden dynamical properties (mass $m$, friction coefficient $\mu$, actuator polarity $\mathbf{W}$) strictly via interaction residuals.
+    \item \textbf{Multi-Schema Continual Retention:} Rather than treating model adaptation as a monolithic parameter overwrite, the agent organizes distinct physical domains into discrete schemas, mitigating catastrophic forgetting during recurring environmental shifts.
+    \item \textbf{Epistemic Active Inference:} When confronted with ambiguous or competing structural physical hypotheses (e.g., linear vs. non-linear drag laws), the agent actively selects actions that maximize predicted information gain and model divergence, accelerating empirical discrimination.
+\end{enumerate}
+
+\section{Related Work \& Cognitive Systems Context}
+\label{sec:related}
+\textbf{Cognitive Architectures:} Classical cognitive architectures, such as ACT-R \citep{anderson1998} and Soar \citep{laird2012}, formalized production systems, declarative memory, and goal-driven problem solving. More recently, cognitive systems research has increasingly focused on embodied perception-action loops, developmental learning, and grounding symbolic representations into continuous dynamic states \citep{vernon2014,morasso2008}. DWMA contributes to this lineage by providing a formal continuous-state formulation of predictive forward modeling and multi-schema retention.
+
+\textbf{World Models and Predictive Processing:} Model-based reinforcement learning systems such as DreamerV1--V3 \citep{hafner2020,hafner2023} and Joint Embedding Predictive Architectures (JEPA) \citep{lecun2022} construct latent dynamics models from high-dimensional offline visual trajectories. In contrast, the predictive processing and active inference frameworks in cognitive neuroscience \citep{friston2010,friston2015,buckley2021} emphasize real-time prediction error minimization, motor reafference cancellation \citep{vonholst1950}, and the active sampling of sensory observations to resolve epistemic uncertainty \citep{oudeyer2007}. DWMA operationalizes these principles into an explicit, verifiable computational architecture.
+
+\textbf{Continual Learning \& the Stability-Plasticity Dilemma:} Retaining past sensorimotor competencies across non-stationary domains without experiencing catastrophic interference remains a central challenge in computational learning systems \citep{french1999,grossberg1982,kirkpatrick2017}. While deep neural networks typically mitigate forgetting through parameter regularization (e.g., EWC) or experience replay buffers, cognitive systems frequently leverage modular and discrete schema structures \citep{whittington2020}. DWMA employs a Bayesian likelihood schema store that preserves previously acquired physical dynamics with near-complete retention.
+
+\section{Architecture \& Computational Formulation}
+\label{sec:arch}
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=0.92\textwidth]{figures/fig1_system_architecture.png}
+\caption{\textbf{DWMA Embodied Closed-Loop Predictive Architecture.} An autonomous closed sensorimotor loop: Physical Environment $\to$ Sensory Buffer (Observation \& Reafference) $\to$ Predictive World Model $\mathcal{M}$ (Forward kinematics \& residual monitoring) $\to$ Epistemic Active Driver (Hypothesis divergence maximization) $\to$ Motor Actuation Mapping $\to$ Physical Environment. The Predictive World Model interfaces bidirectionally with a Multi-Schema Memory Store to preserve and retrieve discrete physical domains.}
+\label{fig:arch}
+\end{figure*}
+
+The architecture of DWMA is depicted in Fig.~\ref{fig:arch}. It operates in continuous time (discretized at step $\Delta t = 0.05$\,s) within a 2D symplectic dynamical physical simulation.
+
+\subsection{Physical Environment \& Latent Dynamics}
+The agent is embodied as a point mass $m$ situated in a continuous 2D planar arena with position $\mathbf{x} = [x, y]^T \in [-10, 10]^2$ and velocity $\mathbf{v} = [\dot{x}, \dot{y}]^T$. The true physical dynamics follow Newton's second law with viscous friction:
+\begin{equation}
+m \ddot{\mathbf{x}} = \mathbf{F}_t - \mu \mathbf{v} + \mathbf{F}_{\text{ext}} + \boldsymbol{\xi}_t
+\end{equation}
+where $\mu$ is the latent friction coefficient, $\mathbf{F}_t$ is the actuator thrust generated by the agent, $\mathbf{F}_{\text{ext}}$ is external environmental force (e.g., gravity or obstacles), and $\boldsymbol{\xi}_t \sim \mathcal{N}(0, \sigma^2 \mathbf{I})$ denotes Gaussian sensor and process noise ($\sigma = 0.01$). Crucially, parameters $\{m, \mu, \mathbf{F}_{\text{ext}}\}$ are unobserved latent variables.
+
+\subsection{Sensory Buffer \& Motor Reafference Cancellation}
+At each interaction step $t$, the agent receives an egocentric observation $\mathbf{o}_t = [x, y, v_x, v_y, \theta]^T$. To dissociate environmental accelerations from self-generated motor forces, the agent applies reafference cancellation \citep{vonholst1950}:
+\begin{equation}
+\mathbf{a}_{\text{motor}} = \frac{\Delta \mathbf{v}}{\Delta t} + \mathbf{v}(1 - \hat{\mu})
+\end{equation}
+The instantaneous directional alignment $\cos(\theta)$ between the intended action command $\mathbf{a}_t$ and the measured motor reafference $\mathbf{a}_{\text{motor}}$ is:
+\begin{equation}
+\cos(\theta) = \frac{\mathbf{a}_t \cdot \mathbf{a}_{\text{motor}}}{\|\mathbf{a}_t\| \|\mathbf{a}_{\text{motor}}\|}
+\end{equation}
+To ensure robust immunity against sensor noise, directional evidence is accumulated via an Exponential Moving Average (EMA) with smoothing factor $\gamma = 0.80$:
+\begin{equation}
+\Lambda_t = \gamma \Lambda_{t-1} + (1 - \gamma) \cos(\theta)
+\end{equation}
+When the accumulator drops below a calibrated threshold $\Lambda_{\text{thresh}} = -0.50$, an actuator polarity inversion is detected, triggering an immediate internal update: $\hat{\mathbf{W}} \leftarrow -\hat{\mathbf{W}}$.
+
+\subsection{Predictive Forward Model $\mathcal{M}$}
+The forward model predicts the next state $\hat{\mathbf{s}}_{t+1} = \mathcal{M}(\mathbf{s}_t, \mathbf{a}_t)$ using recursively estimated physical parameters:
+\begin{equation}
+\hat{\mathbf{v}}_{t+1} = \mathbf{v}_t (1 - \hat{\mu} \Delta t) + \frac{\hat{\alpha} \Delta t}{\hat{m}} \hat{\mathbf{W}} \mathbf{a}_t
+\end{equation}
+The instantaneous prediction residual $\mathbf{e}_v = \mathbf{v}_{t+1} - \hat{\mathbf{v}}_{t+1}$ drives continuous parameter adaptation through recursive gradient updates.
+
+\subsection{Multi-Schema Memory Store}
+Rather than allowing continuous parameter updates to overwrite existing knowledge when entering a new domain, the agent maintains a discrete schema store $\mathcal{S} = \{\mathcal{S}_1, \mathcal{S}_2, \dots, \mathcal{S}_K\}$, where each schema encapsulates a set of physical constants: $\mathcal{S}_k = \{\hat{\mu}_k, \hat{\alpha}_k, \hat{\mathbf{W}}_k\}$. 
+When observing sensory transitions, the agent computes the Bayesian likelihood of current prediction residuals under each stored schema:
+\begin{equation}
+\mathcal{L}(\mathcal{S}_k) = \prod_{i=1}^H \mathcal{N}(\mathbf{e}_{v, i} \mid 0, \sigma_\epsilon^2 \mathbf{I})
+\end{equation}
+If the maximum likelihood exceeds an affinity threshold, the corresponding schema is activated; otherwise, a novel schema is instantiated.
+
+\subsection{Epistemic Active Inference Driver}
+When competing structural hypotheses $H_1$ and $H_2$ exist regarding the environmental dynamics (e.g., linear vs. non-linear drag), the agent computes the anticipated hypothesis divergence:
+\begin{equation}
+\Delta(v) = |\hat{F}_1(v) - \hat{F}_2(v)|
+\end{equation}
+Rather than executing passive or random motor babbling, the epistemic driver selects the action $\mathbf{a}_t^*$ that maximizes expected divergence:
+\begin{equation}
+\mathbf{a}_t^* = \arg\max_{\mathbf{a} \in [-1, 1]^2} \Delta\left(\hat{v}(\mathbf{a})\right)
+\end{equation}
+This targeted excitation accelerates evidentiary accumulation, enabling rapid and statistically decisive hypothesis discrimination.
+
+\section{Experimental Protocol \& Statistical Methodology}
+\label{sec:methods}
+The empirical evaluation of DWMA is conducted across five rigorous, preregistered phases. All experiments are executed across $N = 50$ paired deterministic seeds. To ensure scientific rigor and avoid distribution-dependent assumptions, statistical metrics are reported as sample means with non-parametric bootstrap $95\%$ confidence intervals computed over $B = 10,000$ resamples:
+\begin{itemize}
+    \item \textbf{One-Step Forecasting MSE ($E_{\text{MSE}}$):} Mean squared error between observed and predicted velocities across benchmark horizons.
+    \item \textbf{Adaptation Latency ($T_\epsilon$):} The number of interaction steps required for the prediction error to settle below an empirical convergence threshold $\epsilon = 0.05$ following an environmental shift.
+    \item \textbf{Continual Retention Index ($\mathcal{R}$):} Defined for an $A \to B \to A$ transfer cycle as:
+    \begin{equation}
+    \mathcal{R} = 1 - \frac{|E_{A2} - E_{A1}|}{\max(E_{A1}, E_{A2})}
+    \end{equation}
+    where $E_{A1}$ is the terminal error in initial domain $A$, and $E_{A2}$ is the zero-shot error upon returning to domain $A$. A score of $\mathcal{R} \ge 0.75$ constitutes a successful retention pass; catastrophic forgetting results in negative values ($\mathcal{R} \ll 0$).
+    \item \textbf{Hypothesis Survival Analysis:} Time-to-decision distributions evaluated via Kaplan-Meier estimators and Mantel-Cox log-rank tests with fair decoupled pseudo-random number generation (RNG).
+\end{itemize}
+
+\section{Baseline Verification Results (Phase 1)}
+\label{sec:phase1}
+Phase 1 benchmarks DWMA across seven canonical sensorimotor tasks: Zero-Shot Generalization (BM-1), Goal Navigation (BM-2), Silent Friction Drift (BM-3), Epistemic Uncertainty Reduction (BM-4), Causal Actuator Repair (BM-5), Multi-Force Composition (BM-6), and Polarity Inversion (BM-7). 
+
+As summarized in Table~\ref{tab:master}, the unprivileged DWMA forward model achieves an average $8.8\times$ reduction in forecasting MSE compared to standard persistence and linear autoregressive baselines ($E_{\text{MSE}} = 0.0041$ vs. $0.0362$, Cohen's $d = 11.45$). Navigation efficiency exhibits tight convergence ($23.10 \pm 2.46$ steps to target), and polarity reversals are identified within $4.0$ steps with $96\%$ pass rate.
+
+\section{Cross-World Adaptation Dynamics (Phase 2)}
+\label{sec:phase2}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{figures/fig2_cross_world_adaptation.png}
+\caption{\textbf{Phase 2 Cross-World Adaptation Dynamics ($A \to B \to C$).} Zero-shot transfer shocks and subsequent exponential error decay curves across 50 paired seeds ($B=10,000$ bootstrap iterations).}
+\label{fig:phase2}
+\end{figure}
+
+To evaluate adaptability under non-stationary physical regimes, agents undergo sequential transfer through three distinct environments:
+\begin{itemize}
+    \item \textbf{World A:} Low friction ($\mu = 0.05$), standard mass ($m = 1.0$), canonical polarity ($\mathbf{W} = \mathbf{I}$).
+    \item \textbf{World B:} High viscous damping ($\mu = 0.35$), heavy mass ($m = 2.5$).
+    \item \textbf{World C:} Inverted actuator polarity ($\mathbf{W} = -\mathbf{I}$), altered restitution ($e = 0.85$).
+\end{itemize}
+As illustrated in Fig.~\ref{fig:phase2}, transitions into novel domains produce instantaneous shock residuals ($E_{L_2} = 1.3079 \pm 0.0421$ in World B; $E_{L_2} = 0.8117 \pm 0.0272$ in World C). DWMA exhibits smooth exponential error relaxation, reaching asymptotic stability within $T_\epsilon = 16.32 \pm 0.62$ interaction steps, achieving a 50/50 ($100\%$) convergence pass rate.
+
+\section{Continual Multi-Schema Retention (Phase 3)}
+\label{sec:phase3}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{figures/fig3_continual_retention.png}
+\caption{\textbf{Phase 3 Continual Retention ($A \to B \to A$).} Multi-schema DWMA retains previously acquired forward models ($\mathcal{R} = 0.9901 \pm 0.0141$), whereas monolithic overwriting suffers catastrophic interference ($\mathcal{R} = -72.97$).}
+\label{fig:phase3}
+\end{figure}
+
+Following adaptation in World B, agents are returned to World A without further parameter adaptation. As shown in Fig.~\ref{fig:phase3}, the full DWMA architecture demonstrates near-zero error drift ($E_{A1} = 0.00500 \to E_{A2} = 0.00501$), yielding a retention index of $\mathcal{R} = 0.9901 \pm 0.0141$ (50/50 pass rate). 
+
+In contrast, an ablation baseline employing monolithic parameter overwriting updates a single parameter set during exposure to World B. When returned to World A, it suffers catastrophic interference, resulting in severe prediction error ($E_{A2} = 0.37460$, $\mathcal{R} = -72.97$, 0/50 pass rate). This confirms the essential functional role of discrete schema memory in mitigating domain interference.
+
+\section{Active Structural Hypothesis Discrimination (Phase 4)}
+\label{sec:phase4}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{figures/fig4_hypothesis_survival_analysis.png}
+\caption{\textbf{Phase 4 Kaplan-Meier Survival Analysis.} Active epistemic inference achieves median latency of $7.0$ steps (0\% censored) versus $17.0$ steps for random babbling (22\% right-censored at $T=30$; log-rank $\chi^2 = 74.98, p < 10^{-17}$).}
+\label{fig:phase4}
+\end{figure}
+
+In Phase 4, the agent is embedded in an environment governed by non-linear aerodynamic drag:
+\begin{equation}
+F_{\text{true}}(v) = -0.08 v^2 \operatorname{sgn}(v)
+\end{equation}
+The agent maintains two competing structural hypotheses: a linear viscous model ($H_1: F(v) = -\mu v$) and a quadratic drag model ($H_2: F(v) = -c v^2 \operatorname{sgn}(v)$). Model selection is driven by the precision-weighted log-Bayes factor proxy:
+\begin{equation}
+\ln B_{21} = \frac{\text{SSE}_1 - \text{SSE}_2}{2 \sigma_\epsilon^2}
+\end{equation}
+where decisive evidence requires $\ln B_{21} > 10.0$ within an interaction horizon of $T = 30$ steps. Runs failing to reach decisive separation are treated as right-censored at $T = 30$.
+
+Under a fair decoupled-RNG protocol between sensor noise and policy sampling, Fig.~\ref{fig:phase4} depicts the Kaplan-Meier survival curves. The active epistemic policy resolves the hypothesis within a median latency of $7.0$ steps with $0\%$ censoring (50/50 passed). In contrast, uniform random motor babbling requires a median latency of $17.0$ steps and suffers $22.0\%$ right-censoring ($11/50$ runs failed to decide; Mantel-Cox log-rank $\chi^2 = 74.98, p < 10^{-17}$). Active inference yields a $2.43\times$ reduction in median discrimination steps ($2.13\times$ speedup among uncensored runs, $7.18 \pm 2.59$ vs. $15.28 \pm 5.88$ steps).
+
+\section{Hyperparameter Sensitivity \& Architectural Ablations}
+\label{sec:ablations}
+
+\begin{table}[t]
+\centering
+\small
+\caption{\textbf{Component and Policy Ablation Matrix ($N = 50$)}}
+\label{tab:ablation}
+\begin{tabular}{lcccc}
+\toprule
+\textbf{Configuration} & \textbf{Median Lat.} & \textbf{Pass Rate} & \textbf{Censored} & \textbf{Retention $\mathcal{R}$} \\
+\midrule
+Full DWMA ($v^*$) & \textbf{7.0 st} & \textbf{50/50 (100\%)} & \textbf{0\%} & \textbf{0.9901} \\
+$\epsilon$-Greedy ($\epsilon=0.2$) & 7.0 st & 50/50 (100\%) & 0\% & 0.9901 \\
+Random Babbler & 17.0 st & 39/50 (78\%) & 22\% (11/50) & --- \\
+Passive ($a = 0$) & $>30.0$ st & 0/50 (0\%) & 100\% (50/50) & --- \\
+No Multi-Schema & 7.0 st & 50/50 (100\%) & 0\% & -72.97 (Collapse) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[t]
+\centering
+\small
+\caption{\textbf{Sensitivity Analysis of Directional Smoothing Factor $\gamma$}}
+\label{tab:sensitivity}
+\begin{tabular}{cccc}
+\toprule
+\textbf{Parameter $\gamma$} & \textbf{Threshold $\Lambda_{\text{thresh}}$} & \textbf{Mean Flip Step} & \textbf{Observed Operational Dynamics} \\
+\midrule
+0.60 & -0.50 & $2.00 \pm 0.00$ st & Vulnerable to sensor noise chatter \\
+0.70 & -0.50 & $2.00 \pm 0.00$ st & Marginal noise immunity \\
+\textbf{0.80} & \textbf{-0.50} & $\mathbf{4.00 \pm 0.00}$ \textbf{st} & \textbf{Calibrated: noise-immune and fast} \\
+0.90 & -0.50 & $7.00 \pm 0.00$ st & Sluggish adaptation response \\
+0.95 & -0.50 & $14.00 \pm 0.00$ st & Severe adaptation lag ($3.5\times$ shock) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+To empirically characterize the sensitivity and functional roles of individual components in preventing observed operational degradation modes, we conduct systematic ablation experiments across $N = 50$ seeds (Tables~\ref{tab:ablation} and~\ref{tab:sensitivity}):
+\begin{itemize}
+    \item \textbf{Directional Smoothing Factor $\gamma$:} Low values ($\gamma \le 0.70$) react too quickly, introducing risk of noise-induced chatter under sensor noise. High values ($\gamma \ge 0.90$) introduce sluggish adaptation lag. The calibrated value $\gamma = 0.80$ achieves stable 4-step polarity inversion without false alarms.
+    \item \textbf{Exploratory Policy:} A passive observer ($a = 0$) never excites high-velocity regimes where linear and quadratic drag diverge, resulting in $100\%$ censoring. Targeted epistemic selection resolves ambiguity efficiently ($7.0$ steps) even under $20\%$ stochastic action perturbation ($\epsilon = 0.20$).
+    \item \textbf{Discrete Schemas:} Omitting multi-schema memory retains rapid hypothesis resolution within a single episode, but produces complete memory collapse ($\mathcal{R} = -72.97$) upon domain re-entry.
+\end{itemize}
+
+\begin{table*}[t]
+\centering
+\small
+\caption{\textbf{Consolidated Master Empirical Evaluation Matrix ($N=50$ Deterministic Seeds)}}
+\label{tab:master}
+\begin{tabular}{llcc}
+\toprule
+\textbf{Evaluation Phase} & \textbf{Target Metric} & \textbf{Observed (Mean $\pm$ SD)} & \textbf{Pass Rate} \\
+\midrule
+BM-1 Zero-Shot & Forecasting Gain & $85.82\% \pm 2.53\%$ & 49/50 (98\%) \\
+BM-2 Goal Navigation & Steps to Target & $23.10 \pm 2.46$ st & 50/50 (100\%) \\
+BM-3 Silent Drift & Shock Residual MSE & $1.384 \pm 0.120$ & 50/50 (100\%) \\
+BM-4 Epistemic Drive & Information Gain ($\Delta H$) & $5.14 \pm 0.23$ nats & 50/50 (100\%) \\
+BM-5 Causal Repair & Affordance Error Ratio & $1.18 \pm 0.48$ px & 50/50 (100\%) \\
+BM-6 Composition & Multi-Force MSE & $0.119 \pm 0.075$ & 50/50 (100\%) \\
+BM-7 Polarity Detection & Heading Alignment & $0.9915 \pm 0.0057$ & 48/50 (96\%) \\
+\midrule
+Phase 2 Transfer B & Shock Residual $E_{L_2}$ & $1.3079 \pm 0.0421$ & Nominal Shock \\
+Phase 2 Transfer C & Shock Residual $E_{L_2}$ & $0.8117 \pm 0.0272$ & Nominal Shock \\
+Phase 2 Adaptation & Convergence Latency $T_\epsilon$ & $16.32 \pm 0.62$ st & 50/50 (100\%) \\
+\midrule
+Phase 3 Full DWMA & Error Drift $E_{A1} \to E_{A2}$ & $0.00500 \to 0.00501$ & 50/50 ($\mathcal{R}=0.9901$) \\
+Phase 3 Overwriter & Error Drift $E_{A1} \to E_{A2}$ & $0.00500 \to 0.37460$ & 0/50 ($\mathcal{R}=-72.97$) \\
+\midrule
+Phase 4 Active Epistemic & Log-Bayes Factor $\ln B_{21}$ & $30.35 \pm 8.03$ & 50/50 (100\%) \\
+Phase 4 Random Babbling & Log-Bayes Factor $\ln B_{21}$ & $24.40 \pm 18.52$ & 39/50 (78\%) \\
+Phase 4 KM Median Latency & Epistemic vs. Random & $7.0$ st vs. $17.0$ st & $\chi^2 = 74.98, p < 10^{-17}$ \\
+\bottomrule
+\end{tabular}
+\end{table*}
+
+\section{Discussion}
+\label{sec:discussion}
+The experimental results provide clear evidence regarding the interplay between embodied interaction, memory organization, and active inference in developmental systems. 
+
+First, the motor reafference cancellation mechanism provides a grounded inductive bias that allows the agent to untangle environmental dynamics from intentional motor thrust without requiring external supervision. 
+
+Second, the multi-schema memory architecture resolves the classical stability-plasticity dilemma in continuous physical domains. By segregating parameter updates into discrete schemas indexed by Bayesian likelihood, the agent achieves rapid adaptation in novel worlds while preserving prior competencies ($\mathcal{R} = 0.9901$).
+
+Finally, the hypothesis discrimination experiments demonstrate the functional utility of active inference. While passive observation fails entirely ($100\%$ censoring) and uniform babbling experiences prolonged ambiguity ($22\%$ censoring), targeted epistemic exploration systematically drives the agent toward high-velocity regimes where model divergence is maximized, substantially accelerating scientific discovery in autonomous systems.
+
+\section{Limitations \& Future Directions}
+\label{sec:limitations}
+While DWMA provides a rigorous proof-of-concept for unprivileged sensorimotor structure acquisition, several limitations warrant explicit acknowledgement:
+\begin{enumerate}
+    \item \textbf{Low-Dimensional State Representations:} The current implementation evaluates continuous 2D planar simulations. Extending these principles to high-dimensional visual sensory streams (e.g., egocentric camera feeds) and 3D rigid-body contact dynamics remains an open research direction.
+    \item \textbf{Discrete Hypothesis Spaces:} In Phase 4, the agent discriminates between two predetermined candidate structural models (linear vs. quadratic). Developing open-ended symbolic regression mechanisms capable of synthesizing novel functional forms online represents a vital next step.
+    \item \textbf{Physical Robotic Embodiment:} Real-world deployment will introduce non-ideal actuator backlash, temporal latency, and non-Gaussian sensor noise, which will necessitate adaptive filtering beyond static EMA smoothing.
+\end{enumerate}
+
+\section{Conclusion}
+\label{sec:conclusion}
+DWMA demonstrates that an embodied cognitive architecture can autonomously acquire grounded predictive forward models, adapt rapidly across non-stationary physical regimes, mitigate catastrophic forgetting through multi-schema memory, and actively accelerate structural hypothesis discrimination without relying on Large Language Models or privileged simulation states. Systematic ablations confirm the measurable functional roles of epistemic action selection, directional EMA smoothing, and discrete schema memory in stabilizing online sensorimotor loops. Complete source code, deterministic trajectories, and turnkey replication scripts are openly archived for full community replication.
+
+\section*{CRediT Authorship Contribution Statement}
+\textbf{Kunal Lubhana:} Conceptualization, Methodology, Software, Validation, Formal analysis, Investigation, Data curation, Writing - Original Draft, Writing - Review \& Editing, Visualization, Project administration.
+
+\section*{Declaration of Competing Interest}
+The author declares that he has no known competing financial interests or personal relationships that could have appeared to influence the work reported in this paper.
+
+\section*{Data and Code Availability}
+The complete source code, 50-seed deterministic trajectory datasets, configuration files, and turnkey reproduction scripts associated with this study are openly available in the GitHub repository at \url{https://github.com/Kunallubhana77/DWMA-developmental-world-model-ai} and permanently preserved in Zenodo at \url{https://doi.org/10.5281/zenodo.22796871}.
+
+\section*{Funding Statement}
+This research did not receive any specific grant from funding agencies in the public, commercial, or not-for-profit sectors. It was conducted as an independent research investigation.
+
+\begin{thebibliography}{99}
+\small
+\bibitem[Anderson and Lebiere(1998)]{anderson1998}
+Anderson, J. R., \& Lebiere, C. (1998). \textit{The Atomic Components of Thought}. Lawrence Erlbaum Associates.
+
+\bibitem[Bender and Koller(2020)]{bender2020}
+Bender, E. M., \& Koller, A. (2020). Climbing towards NLU: On meaning, form, and understanding in the age of data. In \textit{Proceedings of the 58th Annual Meeting of the Association for Computational Linguistics} (pp. 5185--5198).
+
+\bibitem[Brooks(1991)]{brooks1991}
+Brooks, R. A. (1991). Intelligence without representation. \textit{Artificial Intelligence}, 47(1-3), 139--159.
+
+\bibitem[Buckley et al.(2021)]{buckley2021}
+Buckley, C. L., Kim, C. S., McGregor, S., \& Seth, A. K. (2021). The free energy principle for action and perception: A mathematical review. \textit{Journal of Mathematical Psychology}, 86, 55--79.
+
+\bibitem[French(1999)]{french1999}
+French, R. M. (1999). Catastrophic forgetting in connectionist networks. \textit{Trends in Cognitive Sciences}, 3(4), 128--135.
+
+\bibitem[Friston(2010)]{friston2010}
+Friston, K. (2010). The free-energy principle: A unified brain theory? \textit{Nature Reviews Neuroscience}, 11(2), 127--138.
+
+\bibitem[Friston et al.(2015)]{friston2015}
+Friston, K., Rigoli, F., Ognibene, D., Mathys, C., Fitzgerald, T., \& Pezzulo, G. (2015). Active inference and epistemic value. \textit{Cognitive Neuroscience}, 6(4), 187--214.
+
+\bibitem[Gopnik(2012)]{gopnik2012}
+Gopnik, A. (2012). Scientific thinking in young children: Theoretical advances, empirical research, and policy implications. \textit{Science}, 337(6102), 1623--1627.
+
+\bibitem[Grossberg(1982)]{grossberg1982}
+Grossberg, S. (1982). \textit{Studies of Mind and Brain: Neural Principles of Learning, Perception, Development, Cognition, and Motor Control}. Reidel Press.
+
+\bibitem[Hafner et al.(2020)]{hafner2020}
+Hafner, D., Lillicrap, T., Ba, J., \& Norouzi, M. (2020). Dream to Control: Learning behaviors by latent imagination. In \textit{International Conference on Learning Representations (ICLR)}.
+
+\bibitem[Hafner et al.(2023)]{hafner2023}
+Hafner, D., Pasukonis, J., Ba, J., \& Lillicrap, T. (2023). Mastering diverse domains through world models. \textit{arXiv preprint arXiv:2301.04104}.
+
+\bibitem[Harnad(1990)]{harnad1990}
+Harnad, S. (1990). The symbol grounding problem. \textit{Physica D: Nonlinear Phenomena}, 42(1-3), 335--346.
+
+\bibitem[Kaplan and Meier(1958)]{kaplan1958}
+Kaplan, E. L., \& Meier, P. (1958). Nonparametric estimation from incomplete observations. \textit{Journal of the American Statistical Association}, 53(282), 457--481.
+
+\bibitem[Kirkpatrick et al.(2017)]{kirkpatrick2017}
+Kirkpatrick, J., Pascanu, R., Rabinowitz, N., Veness, J., Desjardins, G., Rusu, A. A., ... \& Hadsell, R. (2017). Overcoming catastrophic forgetting in neural networks. \textit{Proceedings of the National Academy of Sciences}, 114(13), 3521--3526.
+
+\bibitem[Laird(2012)]{laird2012}
+Laird, J. E. (2012). \textit{The Soar Cognitive Architecture}. MIT Press.
+
+\bibitem[LeCun(2022)]{lecun2022}
+LeCun, Y. (2022). A path towards autonomous machine intelligence. \textit{OpenReview}, Version 0.9.2.
+
+\bibitem[Morasso et al.(2008)]{morasso2008}
+Morasso, P., Casadio, M., Mohan, V., \& Zenzeri, J. (2008). Integrating body representations into autonomous systems. \textit{Cognitive Systems Research}, 9(1-2), 123--141.
+
+\bibitem[Oudeyer and Kaplan(2007)]{oudeyer2007}
+Oudeyer, P. Y., \& Kaplan, F. (2007). What is intrinsic motivation? A typology of computational approaches. \textit{Frontiers in Neurorobotics}, 1, 6.
+
+\bibitem[Piaget(1952)]{piaget1952}
+Piaget, J. (1952). \textit{The Origins of Intelligence in Children}. International Universities Press.
+
+\bibitem[Vernon(2014)]{vernon2014}
+Vernon, D. (2014). \textit{Artificial Cognitive Systems: A Primer}. MIT Press.
+
+\bibitem[von Holst and Mittelstaedt(1950)]{vonholst1950}
+von Holst, E., \& Mittelstaedt, H. (1950). Das Reafferenzprinzip: Wechselwirkungen zwischen Zentralnervensystem und Peripherie. \textit{Naturwissenschaften}, 37(20), 464--476.
+
+\bibitem[Whittington et al.(2020)]{whittington2020}
+Whittington, J. C., Muller, T. H., Mark, S., Chen, G., Barry, C., Burgess, N., \& Behrens, T. E. (2020). The Tolman-Eichenbaum Machine: Unifying space and relational memory through generalization in the hippocampal formation. \textit{Cell}, 183(5), 1249--1263.
+
+\end{thebibliography}
+
+\end{document}

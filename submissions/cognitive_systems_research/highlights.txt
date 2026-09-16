@@ -1,0 +1,11 @@
+Highlights for Cognitive Systems Research
+Manuscript: DWMA: Autonomous Sensorimotor Structure Acquisition, Multi-Schema Retention, and Active Hypothesis Discrimination in an Embodied World Model
+Author: Kunal Lubhana
+
+- An embodied world model learns sensorimotor structure online (60 characters)
+- Cross-world experiments evaluate rapid continuous adaptation (60 characters)
+- Multiple schemas preserve previously acquired predictive models (63 characters)
+- Targeted epistemic actions accelerate hypothesis discrimination (63 characters)
+- Code, 50-seed trajectories, and audit tools are openly archived (63 characters)
+
+Note: All 5 bullet points strictly adhere to the Elsevier limit of <= 85 characters per bullet point (including spaces).

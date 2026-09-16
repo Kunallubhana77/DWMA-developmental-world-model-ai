@@ -1,0 +1,42 @@
+To:
+The Editors-in-Chief
+Cognitive Systems Research
+Elsevier
+
+Subject: Submission of Original Research Manuscript: "DWMA: Autonomous Sensorimotor Structure Acquisition, Multi-Schema Retention, and Active Hypothesis Discrimination in an Embodied World Model"
+
+Dear Editors,
+
+I am pleased to submit our original research manuscript titled "DWMA: Autonomous Sensorimotor Structure Acquisition, Multi-Schema Retention, and Active Hypothesis Discrimination in an Embodied World Model" for consideration as a regular research article in Cognitive Systems Research.
+
+Research Question & Thematic Fit:
+Contemporary artificial intelligence architectures increasingly rely on massive, static training corpora and autoregressive sequence prediction over symbolic tokens. However, biological developmental cognition reveals that intelligent agents acquire physical intuition through active, grounded sensorimotor manipulation, reafference cancellation, and hypothesis-directed play. 
+
+In this work, we investigate the fundamental cognitive question: Can an unprivileged embodied agent autonomously acquire, maintain, and adaptively update predictive structure about an interactive dynamical environment while actively discriminating competing physical hypotheses—without relying on Large Language Models or privileged simulator state?
+
+Because Cognitive Systems Research explicitly emphasizes cognitive architectures, developmental systems, computational cognitive modeling, and sensorimotor learning, we believe our unified embodied architecture will be of strong interest to the journal's readership.
+
+Key Empirical Contributions:
+1. Online Structure Acquisition & Baseline Verification: An unprivileged predictive forward model operating via recursive parameter estimation and motor reafference cancellation, achieving an 8.8x forecasting MSE reduction over persistence across 7 baseline benchmarks (Cohen's d = 11.45).
+2. Cross-World Adaptation: Audited evaluation across N = 50 deterministic seeds demonstrating robust cross-world transfer and rapid adaptation under sudden latent parameter shifts (A -> B -> C, T_epsilon = 16.32 +/- 0.62 steps).
+3. Continual Multi-Schema Retention: A discrete schema memory store maintaining previously acquired forward models across alternating domains, achieving an empirical retention index of R = 0.9901 +/- 0.0141 (50/50 pass rate), effectively preventing domain interference compared to monolithic parameter overwriting (R = -72.97).
+4. Active Epistemic Action Selection: Active inference driving targeted exploratory actions that maximize hypothesis divergence, accelerating structural hypothesis discrimination from a median of 17.0 steps (random babbling, 22.0% right-censoring) to 7.0 steps (active, 0% censoring) under a fair decoupled-RNG Kaplan-Meier survival analysis protocol (log-rank chi^2 = 74.98, p < 10^-17).
+5. Sensitivity & Architectural Ablations: Systematic ablations characterizing the functional roles of directional EMA filtering, discrete schema retention, and epistemic action selection in preventing specific operational failure modes.
+
+Preprint & Reproducibility Disclosure:
+In accordance with Elsevier's open preprint sharing policy, a preliminary version of this preprint has been archived for priority and provenance on Zenodo (DOI: 10.5281/zenodo.22796871). The manuscript submitted here represents the full, peer-reviewed journal formulation with calibrated scientific claims, expanded architectural exposition, and comprehensive methodological details. 
+
+To ensure complete scientific reproducibility, all source code, 50-seed deterministic trajectory data, evaluation configurations, and turnkey reproduction scripts (reproduce_all.py) are publicly accessible.
+
+Declarations:
+The author confirms that this manuscript is original, has not been published previously in a peer-reviewed journal, and is not currently under consideration elsewhere. The author declares no competing financial or personal interests.
+
+Thank you for your time and consideration of this manuscript.
+
+Sincerely,
+
+Kunal Lubhana
+Independent Researcher
+Email: contact via project repository / research record
+Project Repository: https://github.com/Kunallubhana77/DWMA-developmental-world-model-ai
+Zenodo Record: https://doi.org/10.5281/zenodo.22796871

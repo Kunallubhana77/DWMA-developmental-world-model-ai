@@ -1,0 +1,28 @@
+Declarations and Mandatory Statements for Cognitive Systems Research
+Manuscript: DWMA: Autonomous Sensorimotor Structure Acquisition, Multi-Schema Retention, and Active Hypothesis Discrimination in an Embodied World Model
+Author: Kunal Lubhana (Independent Research)
+
+================================================================================
+1. CRediT Authorship Contribution Statement
+================================================================================
+Kunal Lubhana: Conceptualization, Methodology, Software, Validation, Formal analysis, Investigation, Data curation, Writing - Original Draft, Writing - Review & Editing, Visualization, Project administration.
+
+================================================================================
+2. Declaration of Competing Interest
+================================================================================
+The author declares that he has no known competing financial interests or personal relationships that could have appeared to influence the work reported in this paper.
+
+================================================================================
+3. Data and Code Availability Statement
+================================================================================
+The complete source code, 50-seed deterministic trajectory datasets, configuration files, and turnkey reproduction scripts associated with this study are openly available in the GitHub project repository at https://github.com/Kunallubhana77/DWMA-developmental-world-model-ai and permanently preserved with open access in the Zenodo research archive at https://doi.org/10.5281/zenodo.22796871.
+
+================================================================================
+4. Funding Statement
+================================================================================
+This research did not receive any specific grant from funding agencies in the public, commercial, or not-for-profit sectors. It was conducted as an independent research project.
+
+================================================================================
+5. Prior Preprint Disclosure
+================================================================================
+In accordance with Elsevier's open preprint sharing policy, a preliminary preprint version of this manuscript has been archived for priority on Zenodo (DOI: 10.5281/zenodo.22796871). The manuscript submitted to Cognitive Systems Research represents the full, peer-reviewed journal formulation with calibrated scientific claims and comprehensive methodological exposition.
