@@ -136,6 +136,20 @@ def build_anonymized_manuscript():
     content = content.replace("https://github.com/Kunallubhana77/DWMA-developmental-world-model-ai", "https://github.com/[anonymized-project-repo]")
     content = content.replace("10.5281/zenodo.22796871", "[Zenodo DOI reserved]")
     
+    # Claim calibrations
+    content = content.replace(
+        "completely avoiding the catastrophic forgetting of single-model overwriting",
+        "effectively mitigating catastrophic forgetting through multi-schema preservation (R = 0.9901 +/- 0.0141 vs R = -72.97)"
+    )
+    content = content.replace(
+        "To substantiate the causal mechanisms underlying DWMA and demonstrate that performance is not an artifact of handcrafted constants, we executed an ablation suite across N = 50 seeds.",
+        "To empirically evaluate the functional contributions of individual architectural components and verify operational stability across non-stationary regimes, we executed an ablation suite across N = 50 seeds."
+    )
+    content = content.replace(
+        "To substantiate the causal contributions of DWMA's architectural components",
+        "To empirically evaluate the functional contributions of DWMA's architectural components"
+    )
+    
     # Add Generative AI declaration before References
     ai_decl = """
     <h2>Declaration of Generative AI and AI-Assisted Technologies</h2>
