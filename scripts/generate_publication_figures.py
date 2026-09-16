@@ -38,61 +38,128 @@ os.makedirs(FIGURES_DIR, exist_ok=True)
 # Figure 1: Architectural Schematic & Active Inference Cycle
 # -----------------------------------------------------------------------------
 def plot_architecture_schematic():
-    fig, ax = plt.subplots(figsize=(10, 5.5))
+    fig, ax = plt.subplots(figsize=(13.5, 8.2), dpi=300)
+    ax.set_xlim(0, 13.5)
+    ax.set_ylim(0, 8.2)
     ax.axis('off')
 
-    # Styles
-    box_blue = dict(boxstyle="round,pad=0.5", facecolor="#EBF5FB", edgecolor="#2E86C1", lw=2)
-    box_orange = dict(boxstyle="round,pad=0.5", facecolor="#FEF9E7", edgecolor="#F39C12", lw=2)
-    box_green = dict(boxstyle="round,pad=0.5", facecolor="#EAFAF1", edgecolor="#27AE60", lw=2)
-    box_purple = dict(boxstyle="round,pad=0.5", facecolor="#F4ECF7", edgecolor="#8E44AD", lw=2)
-    box_gray = dict(boxstyle="round,pad=0.5", facecolor="#F2F3F4", edgecolor="#7F8C8D", lw=2)
+    # Card background container
+    bg_card = patches.FancyBboxPatch((0.2, 0.2), 13.1, 7.8, boxstyle='round,pad=0.15', 
+                                    facecolor='#FFFFFF', edgecolor='#E2E8F0', lw=1.5)
+    ax.add_patch(bg_card)
 
-    # Nodes
-    ax.text(0.15, 0.78, "Physical Environment\nDynamical Simulator\n(Latent $\\mu, m, e, g$ hidden)", 
-            ha='center', va='center', bbox=box_gray, fontsize=10, weight='bold')
-    
-    ax.text(0.15, 0.22, "Continuous Motor Action\n$\\mathbf{a}_t \\in [-1, 1]^2$\n$\\mathbf{F}_t = \\alpha \\mathbf{W}_{act} \\mathbf{a}_t$", 
-            ha='center', va='center', bbox=box_orange, fontsize=10, weight='bold')
+    # Title & Subtitle
+    ax.text(6.75, 7.65, "Figure 1: DWMA Embodied Closed-Loop Predictive Architecture", 
+            ha='center', va='center', fontsize=13.5, weight='bold', color='#0F172A')
+    ax.text(6.75, 7.32, "Autonomous Sensorimotor Loop: Reafference Cancellation, Online Adaptation, Multi-Schema Memory & Active Inference", 
+            ha='center', va='center', fontsize=9.2, color='#64748B', style='italic')
 
-    ax.text(0.50, 0.78, "Sensory Observation\n$\\mathbf{o}_t^{ego} = [x, y, v_x, v_y, \\theta]$\n(Reafference Cancellation)", 
-            ha='center', va='center', bbox=box_blue, fontsize=10, weight='bold')
+    def draw_card(x, y, w, h, title, lines, theme_color, bg_color):
+        # Card body
+        card = patches.FancyBboxPatch((x, y), w, h, boxstyle='round,pad=0.12', 
+                                     facecolor=bg_color, edgecolor=theme_color, lw=2.0)
+        ax.add_patch(card)
+        
+        # Header banner area
+        header_y = y + h - 0.45
+        ax.text(x + w/2, y + h - 0.28, title, ha='center', va='center', 
+                fontsize=10.5, weight='bold', color=theme_color)
+        
+        # Divider line under title
+        ax.plot([x + 0.25, x + w - 0.25], [header_y, header_y], color=theme_color, lw=1.2, alpha=0.5)
+        
+        # Body text lines
+        n = len(lines)
+        if n > 0:
+            usable_h = header_y - y - 0.20
+            step = usable_h / n
+            for i, line in enumerate(lines):
+                ax.text(x + w/2, header_y - 0.20 - i * step - step * 0.4, line, 
+                        ha='center', va='center', fontsize=8.8, color='#1E293B')
 
-    ax.text(0.50, 0.48, "Predictive World Model\n$\\hat{\\mathbf{s}}_{t+1} = \\mathcal{M}(\\mathbf{s}_t, \\mathbf{a}_t)$\nOnline Recursive Learning", 
-            ha='center', va='center', bbox=box_purple, fontsize=10, weight='bold')
+    # --- 1. Top-Left: Physical Environment ---
+    draw_card(0.8, 5.2, 3.4, 1.75, "Physical Environment", [
+        "Symplectic 2D Dynamical Simulator",
+        "Latent hidden parameters: $\\mu, m, e, g$",
+        "Integrates: $\\ddot{\\mathbf{x}} = \\frac{1}{m}(\\mathbf{F}_t - \\mu \\mathbf{v})$"
+    ], '#334155', '#F8FAFC')
 
-    ax.text(0.50, 0.18, "Prediction Error / Shock\n$E(t) = \\|\\mathbf{o}_t - \\hat{\\mathbf{o}}_t\\|^2$\n$\\Lambda_t$ Directional Accumulator", 
-            ha='center', va='center', bbox=box_orange, fontsize=10, weight='bold')
+    # --- 2. Top-Center: Sensory Buffer & Reafference ---
+    draw_card(4.9, 5.2, 4.4, 1.75, "Sensory Buffer & Reafference", [
+        "Observation: $\\mathbf{o}_t^{ego} = [x, y, v_x, v_y, \\theta]^T$",
+        "Motor Reafference: $\\mathbf{a}_{motor} = \\frac{\\Delta \\mathbf{v}}{\\Delta t} + \\mathbf{v}(1-\\hat{\\mu})$",
+        "Directional Alignment: $\\cos(\\theta) = \\frac{\\mathbf{a}_t \\cdot \\mathbf{a}_{motor}}{\\|\\mathbf{a}_t\\| \\|\\mathbf{a}_{motor}\\|}$"
+    ], '#0284C7', '#F0F9FF')
 
-    ax.text(0.85, 0.78, "Multi-Schema Memory\n$\\mathcal{S}_k = \\{\\hat{\\mu}_k, \\hat{\\alpha}_k, \\hat{\\mathbf{W}}_k\\}$\nContinual Retention ($R=0.99$)", 
-            ha='center', va='center', bbox=box_green, fontsize=10, weight='bold')
+    # --- 3. Right: Multi-Schema Memory Store ---
+    draw_card(10.0, 2.7, 2.7, 3.2, "Multi-Schema Memory", [
+        "Discrete Schema Store $\\mathcal{S}_k$:",
+        "$\\mathcal{S}_k = \\{\\hat{\\mu}_k, \\hat{\\alpha}_k, \\hat{\\mathbf{W}}_k\\}$",
+        "",
+        "Bayesian Likelihood Matching",
+        "Rapid Context Switching",
+        "",
+        "Continual Retention:",
+        "$\\mathcal{R} = 0.9901 \\pm 0.0141$",
+        "Zero Catastrophic Forgetting"
+    ], '#059669', '#ECFDF5')
 
-    ax.text(0.85, 0.35, "Epistemic Driver\n$\\Delta(v) = |\\hat{F}_1(v) - \\hat{F}_2(v)|$\nInformation Maximization", 
-            ha='center', va='center', bbox=box_blue, fontsize=10, weight='bold')
+    # --- 4. Center: Predictive Forward Model ---
+    draw_card(4.9, 2.7, 4.4, 1.85, "Predictive World Model $\\mathcal{M}$", [
+        "Forward Prediction: $\\hat{\\mathbf{s}}_{t+1} = \\mathcal{M}(\\mathbf{s}_t, \\mathbf{a}_t)$",
+        "Prediction Residual: $\\mathbf{e}_v = \\mathbf{v}_{t+1} - \\hat{\\mathbf{v}}_{t+1}$",
+        "Directional Accumulator: $\\Lambda_t = 0.8\\Lambda_{t-1} + 0.2\\cos(\\theta)$",
+        "Inversion Trigger: if $\\Lambda_t < -0.50 \\Rightarrow \\hat{\\mathbf{W}} \\leftarrow -\\hat{\\mathbf{W}}$"
+    ], '#7C3AED', '#F5F3FF')
 
-    # Arrows
-    arrow = dict(arrowstyle="->", lw=2, color="#2C3E50")
-    
-    # Environment -> Observation
-    ax.annotate("", xy=(0.36, 0.78), xytext=(0.28, 0.78), arrowprops=arrow)
-    # Observation -> Predictive Model
-    ax.annotate("", xy=(0.50, 0.60), xytext=(0.50, 0.68), arrowprops=arrow)
-    # Predictive Model -> Error
-    ax.annotate("", xy=(0.50, 0.28), xytext=(0.50, 0.38), arrowprops=arrow)
-    # Error -> Epistemic Driver & Multi-Schema
-    ax.annotate("", xy=(0.73, 0.35), xytext=(0.63, 0.20), arrowprops=arrow)
-    ax.annotate("", xy=(0.73, 0.75), xytext=(0.63, 0.78), arrowprops=arrow)
-    # Multi-Schema -> Predictive Model
-    ax.annotate("", xy=(0.62, 0.52), xytext=(0.75, 0.70), arrowprops=arrow)
-    # Epistemic Driver -> Action
-    ax.annotate("", xy=(0.27, 0.22), xytext=(0.75, 0.32), arrowprops=arrow)
-    # Action -> Environment
-    ax.annotate("", xy=(0.15, 0.68), xytext=(0.15, 0.32), arrowprops=arrow)
+    # --- 5. Bottom-Center: Epistemic Active Driver ---
+    draw_card(4.9, 0.5, 4.4, 1.55, "Epistemic Active Driver", [
+        "Hypothesis Divergence: $\\Delta(v) = |\\hat{F}_1(v) - \\hat{F}_2(v)|$",
+        "Epistemic Selection: $\\mathbf{a}_t^* = \\arg\\max_a \\Delta(v)$",
+        "Decision Acceleration: $2.43\\times$ speedup ($p < 10^{-17}$)"
+    ], '#2563EB', '#EFF6FF')
 
-    plt.title("Figure 1: DWMA Embodied Closed-Loop Predictive Architecture", pad=15, weight='bold')
-    plt.tight_layout()
+    # --- 6. Bottom-Left: Continuous Motor Actuation ---
+    draw_card(0.8, 0.5, 3.4, 1.55, "Motor Actuation Mapping", [
+        "Continuous Command: $\\mathbf{a}_t \\in [-1, 1]^2$",
+        "Actuator Polarity: $\\hat{\\mathbf{W}} = \\text{diag}(\\pm 1, \\pm 1)$",
+        "Generated Thrust: $\\mathbf{F}_t = \\alpha \\mathbf{W}_{act} \\mathbf{a}_t$"
+    ], '#EA580C', '#FFF7ED')
+
+    # --- ARROWS ---
+    arrow_main = dict(arrowstyle='->,head_width=0.32,head_length=0.52', lw=2.2, color='#1E293B')
+    arrow_bi = dict(arrowstyle='<->,head_width=0.32,head_length=0.52', lw=2.2, color='#059669')
+
+    def add_badge(x, y, text, color='#334155'):
+        ax.text(x, y, text, ha='center', va='center', fontsize=8.2, weight='bold', color=color,
+                bbox=dict(boxstyle='round,pad=0.25', facecolor='#FFFFFF', edgecolor='#CBD5E1', lw=1.0))
+
+    # 1 -> 2: Physical Env -> Sensory Buffer
+    ax.annotate('', xy=(4.9, 6.07), xytext=(4.2, 6.07), arrowprops=arrow_main)
+    add_badge(4.55, 6.42, "State $\\mathbf{o}_t^{ego}$")
+
+    # 2 -> 4: Sensory Buffer -> Predictive Model
+    ax.annotate('', xy=(7.1, 4.55), xytext=(7.1, 5.2), arrowprops=arrow_main)
+    add_badge(7.1, 4.88, "Observation & Reafference")
+
+    # 4 <-> 3: Predictive Model <-> Multi-Schema Memory
+    ax.annotate('', xy=(10.0, 3.8), xytext=(9.3, 3.8), arrowprops=arrow_bi)
+    add_badge(9.65, 4.15, "Schemas $\\mathcal{S}_k$", color='#059669')
+
+    # 4 -> 5: Predictive Model -> Epistemic Driver
+    ax.annotate('', xy=(7.1, 2.05), xytext=(7.1, 2.7), arrowprops=arrow_main)
+    add_badge(7.1, 2.38, "Prediction Residual $\\mathbf{e}_v$")
+
+    # 5 -> 6: Epistemic Driver -> Motor Actuation
+    ax.annotate('', xy=(4.2, 1.28), xytext=(4.9, 1.28), arrowprops=arrow_main)
+    add_badge(4.55, 1.62, "Action $\\mathbf{a}_t^*$")
+
+    # 6 -> 1: Motor Actuation -> Physical Environment
+    ax.annotate('', xy=(2.5, 5.2), xytext=(2.5, 2.05), arrowprops=arrow_main)
+    add_badge(2.5, 3.62, "Continuous Thrust $\\mathbf{F}_t = \\alpha \\mathbf{W}_{act} \\mathbf{a}_t$")
+
     fig_path = os.path.join(FIGURES_DIR, "fig1_system_architecture.png")
-    plt.savefig(fig_path, dpi=300)
+    plt.savefig(fig_path, dpi=300, bbox_inches='tight')
     plt.close()
     print(f"Saved: {fig_path}")
 
