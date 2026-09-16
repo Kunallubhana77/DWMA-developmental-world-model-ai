@@ -2,6 +2,7 @@
 
 **Autonomous Sensorimotor Structure Acquisition, Multi-Schema Retention, and Active Hypothesis Discrimination in an Embodied World Model**
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.22796871.svg)](https://doi.org/10.5281/zenodo.22796871)
 [![Python 3.14](https://img.shields.io/badge/python-3.14-blue.svg)](https://www.python.org/)
 [![Status](https://img.shields.io/badge/status-audited%20%26%20frozen-success.svg)]()
 [![Reproducibility](https://img.shields.io/badge/reproducibility-50%2F50%20seeds%20pass-brightgreen.svg)]()
@@ -119,13 +120,15 @@ Open **[http://localhost:5173/](http://localhost:5173/)** in your browser.
 If you use or reference DWMA in your research, please cite:
 
 ```bibtex
-@article{lubhana2026dwma,
-  title={DWMA: Autonomous Sensorimotor Structure Acquisition, Multi-Schema Retention, and Active Hypothesis Discrimination in an Embodied World Model},
-  author={Lubhana, Kunal},
-  journal={arXiv preprint arXiv:2609.xxxxx},
-  year={2026},
-  month={September},
-  note={Preprint Version 2.1 (Final Research Draft). Formal evaluation across 50 paired deterministic seeds with non-parametric bootstrap}
+@software{lubhana2026dwma,
+  author       = {Lubhana, Kunal},
+  title        = {DWMA: Autonomous Sensorimotor Structure Acquisition, Multi-Schema Retention, and Active Hypothesis Discrimination in an Embodied World Model},
+  month        = sep,
+  year         = 2026,
+  publisher    = {Zenodo},
+  version      = {v2.1},
+  doi          = {10.5281/zenodo.22796871},
+  url          = {https://doi.org/10.5281/zenodo.22796871}
 }
 ```
 
