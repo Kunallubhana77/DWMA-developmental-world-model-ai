@@ -80,8 +80,8 @@ To independently reproduce the entire 4-phase program, recompute all bootstrap c
 
 ```bash
 # Clone the repository
-git clone https://github.com/Kunallubhana77/dwma.git
-cd dwma
+git clone https://github.com/Kunallubhana77/DWMA-developmental-world-model-ai.git
+cd DWMA-developmental-world-model-ai
 
 # Execute complete deterministic pipeline
 python3 reproduce_all.py
