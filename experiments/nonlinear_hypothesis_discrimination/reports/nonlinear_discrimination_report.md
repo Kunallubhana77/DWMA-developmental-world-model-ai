@@ -15,8 +15,8 @@
 
 | Exploration Policy | Primary Evidence Metric | Mean ± StdDev | Empirical Median | Bootstrap 95% CI | Decisive Threshold Pass Rate |
 |---|---|---|---|---|---|
-| **DWMA Epistemic Policy** | Proxy Log-Ratio $\ln(B_{21})$ | **30.35 ± 8.03** | **31.74** | [28.11, 32.53] | **50/50 seeds (100.0%) [PASS]** |
-| **Random Babbler Baseline** | Proxy Log-Ratio $\ln(B_{21})$ | **24.40 ± 18.52** | **19.26** | [19.52, 29.81] | **39/50 seeds (78.0%)** |
+| **DWMA Epistemic Policy** | Proxy Log-Ratio $\ln(B_{21})$ | **30.35 ± 8.03** | **31.74** | [28.03, 32.49] | **50/50 seeds (100.0%) [PASS]** |
+| **Random Babbler Baseline** | Proxy Log-Ratio $\ln(B_{21})$ | **24.40 ± 18.52** | **19.26** | [19.52, 29.84] | **39/50 seeds (78.0%)** |
 
 | Exploration Policy | State Discrepancy $\Delta(v)$ | Peak Velocity $|v_{\text{max}}|$ | RMSE $H_1$ (Linear) | RMSE $H_2$ (Quadratic) | Action Selection Regime |
 |---|---|---|---|---|---|
