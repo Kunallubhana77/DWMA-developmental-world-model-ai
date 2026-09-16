@@ -1,0 +1,28 @@
+{
+  "experiment_name": "continual_retention_aba",
+  "version": "1.0.0",
+  "num_seeds": 50,
+  "interaction_budget": 40,
+  "retention_threshold": 0.75,
+  "worlds": {
+    "A": {
+      "name": "World A (Earth Baseline)",
+      "friction": 0.88,
+      "actuator_scale": 0.85,
+      "actuator_polarity": 1.0,
+      "gravity": 9.8
+    },
+    "B": {
+      "name": "World B (Novel Transferred Dynamics)",
+      "friction": 0.71,
+      "actuator_scale": 0.85,
+      "actuator_polarity": -1.0,
+      "gravity": 4.2
+    }
+  },
+  "success_criteria": {
+    "min_retention_R": 0.75,
+    "max_adaptation_steps_B": 20,
+    "max_final_error_A2": 0.010
+  }
+}

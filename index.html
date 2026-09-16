@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DWMA: Developmental World-Model AI Brain</title>
+  <!-- Google Fonts: Outfit & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/src/style.css">
+</head>
+<body>
+
+  <!-- Top Header Navigation -->
+  <header>
+    <div class="brand">
+      <div class="logo-badge">🧠</div>
+      <div class="title-group">
+        <h1>DWMA : Developmental World-Model AI</h1>
+        <span>LLM-LESS COGNITIVE ARCHITECTURE &amp; NEURO-SYMBOLIC EMERGENCE</span>
+      </div>
+    </div>
+
+    <div class="header-status">
+      <div class="status-pill pulse">
+        <span class="dot"></span>
+        <span id="header-status-text">COGNITIVE LOOP ACTIVE</span>
+      </div>
+      <div class="status-pill">
+        <span>DEVICE:</span> <strong style="color:#fff;">MacBook (Local Engine)</strong>
+      </div>
+    </div>
+  </header>
+
+  <!-- Infant Developmental Stages Navigation -->
+  <nav class="stages-nav">
+    <span style="font-size: 0.75rem; color: var(--text-dim); font-family: 'JetBrains Mono'; margin-right: 0.5rem;">DEVELOPMENTAL STAGE:</span>
+    <button class="stage-btn active" data-stage="0" id="btn-stage-0">
+      <span class="stage-badge">STAGE 0</span>
+      <span>Motor Babbling &amp; Agency (Self Discovery)</span>
+    </button>
+    <button class="stage-btn" data-stage="1" id="btn-stage-1">
+      <span class="stage-badge">STAGE 1</span>
+      <span>Tactile Collision &amp; Physical Objects</span>
+    </button>
+    <button class="stage-btn" data-stage="2" id="btn-stage-2">
+      <span class="stage-badge">STAGE 2</span>
+      <span>Epistemic Curiosity &amp; Experimentation</span>
+    </button>
+    <button class="stage-btn" data-stage="3" id="btn-stage-3">
+      <span class="stage-badge">STAGE 3</span>
+      <span>Mental Rollouts &amp; Causal Planning</span>
+    </button>
+    <button class="stage-btn" data-stage="4" id="btn-stage-4">
+      <span class="stage-badge">STAGE 4</span>
+      <span>Multi-Step Tool Use (Indirect Causality)</span>
+    </button>
+  </nav>
+
+  <!-- Main Grid Dashboard -->
+  <main class="dashboard-grid">
+
+    <!-- Left Column: Simulation Sandbox & Physical Telemetry -->
+    <div class="simulation-panel">
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">
+            <span>🌐 Physical Sandbox &amp; Sensory Perception Field</span>
+          </div>
+          <div style="font-size: 0.75rem; color: var(--text-dim); font-family: 'JetBrains Mono';">
+            CLICK / DRAG OBJECTS • CLICK ARENA FOR BEACON
+          </div>
+        </div>
+
+        <div class="canvas-wrapper">
+          <canvas id="world-canvas" width="800" height="520"></canvas>
+          <div class="canvas-overlay-controls">
+            <button class="tool-btn" id="btn-spawn-box">+ Light Box</button>
+            <button class="tool-btn" id="btn-spawn-boulder">+ Heavy Boulder</button>
+            <button class="tool-btn" id="btn-spawn-barrier">+ Static Pillar</button>
+          </div>
+        </div>
+
+        <!-- Simulation Toolbar -->
+        <div class="sim-controls-bar" style="margin-top: 0.75rem;">
+          <div class="control-group">
+            <button class="primary-btn" id="btn-play-pause">⏸ Pause</button>
+            <button class="secondary-btn" id="btn-step">⏭ Step Once</button>
+            <button class="secondary-btn" id="btn-reset">↺ Reset World</button>
+            <button class="secondary-btn" id="btn-tool-challenge" style="border-color: rgba(245, 158, 11, 0.4); color: #fef08a;">🧩 Tool Challenge</button>
+          </div>
+
+          <div class="control-group">
+            <span style="font-size: 0.75rem; color: var(--text-muted); font-family: 'JetBrains Mono';">SIM SPEED:</span>
+            <button class="secondary-btn active" id="btn-speed-1x">1x</button>
+            <button class="secondary-btn" id="btn-speed-2x">2x</button>
+            <button class="secondary-btn" id="btn-speed-4x">4x</button>
+          </div>
+        </div>
+
+        <!-- Scientific Stress-Test Benchmarks Panel -->
+        <div style="margin-top: 0.75rem; padding: 0.75rem 1rem; border-radius: 10px; border: 1px solid rgba(99, 102, 241, 0.35); background: rgba(30, 27, 75, 0.35);">
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.6rem;">
+            <div style="font-size: 0.82rem; font-weight: 700; color: #c7d2fe; display: flex; align-items: center; gap: 0.4rem;">
+              <span>🔬 SCIENTIFIC STRESS-TEST BENCHMARKS (Adversarial Testing)</span>
+            </div>
+            <span style="font-size: 0.7rem; color: #a5b4fc; font-family: 'JetBrains Mono';" id="benchmark-active-badge">ACTIVE: WORLD A</span>
+          </div>
+
+          <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.45rem;">
+            <button class="secondary-btn" id="btn-bm-world-b" style="border-color: rgba(168, 85, 247, 0.4); color: #d8b4fe; font-size: 0.72rem;">
+              🪐 1. World B
+            </button>
+            <button class="secondary-btn" id="btn-bm-blind-goal" style="border-color: rgba(56, 189, 248, 0.4); color: #7dd3fc; font-size: 0.72rem;">
+              🎯 2. Goal Maze
+            </button>
+            <button class="secondary-btn" id="btn-bm-silent-drift" style="border-color: rgba(244, 63, 94, 0.4); color: #fda4af; font-size: 0.72rem;">
+              🧊 3. Silent Drift
+            </button>
+            <button class="secondary-btn" id="btn-bm-epistemic" style="border-color: rgba(16, 185, 129, 0.4); color: #6ee7b7; font-size: 0.72rem;">
+              🧬 4. Active Epistemic
+            </button>
+            <button class="secondary-btn" id="btn-bm-counterfactual" style="border-color: rgba(234, 179, 8, 0.4); color: #fde047; font-size: 0.72rem;">
+              🔮 5. Counterfactual
+            </button>
+            <button class="secondary-btn" id="btn-bm-compositional" style="border-color: rgba(249, 115, 22, 0.4); color: #fdba74; font-size: 0.72rem;">
+              🧩 6. Compositional
+            </button>
+            <button class="secondary-btn" id="btn-bm-reversal" style="border-color: rgba(236, 72, 153, 0.4); color: #f472b6; font-size: 0.72rem;">
+              🧲 7. Direction Reversal
+            </button>
+          </div>
+
+          <!-- Scientific Live Telemetry Row -->
+          <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.5rem; margin-top: 0.6rem; padding-top: 0.5rem; border-top: 1px solid rgba(255, 255, 255, 0.06); font-family: 'JetBrains Mono'; font-size: 0.72rem;">
+            <div><span style="color: #94a3b8;">WORLD:</span> <strong id="tele-env-name" style="color: #fff;">World A (Earth Sandbox)</strong></div>
+            <div><span style="color: #94a3b8;">GROUND FRICTION:</span> <strong id="tele-friction-val" style="color: #6ee7b7;">0.88</strong></div>
+            <div><span style="color: #94a3b8;">MODEL WEIGHT (w_f):</span> <strong id="tele-weight-friction" style="color: #38bdf8;">0.85</strong></div>
+            <div><span style="color: #94a3b8;">INFO GAIN:</span> <strong id="tele-info-gain" style="color: #fef08a;">0.00 nats</strong></div>
+          </div>
+
+          <!-- BM-5 Counterfactual Causal Card -->
+          <div id="counterfactual-card" style="display: none; margin-top: 0.5rem; padding: 0.6rem 0.8rem; background: rgba(56, 189, 248, 0.07); border: 1px solid rgba(56, 189, 248, 0.25); border-radius: 6px; font-size: 0.75rem; font-family: 'JetBrains Mono';">
+            <div style="font-weight: 600; color: #38bdf8; display: flex; justify-content: space-between;">
+              <span>🔬 BM-5 COUNTERFACTUAL CAUSAL INTERVENTION:</span>
+              <span id="bm5-badge" style="color: #4ade80;">STATUS: VERIFIED</span>
+            </div>
+            <div id="bm5-readout" style="color: #cbd5e1; margin-top: 0.35rem; line-height: 1.4;"></div>
+          </div>
+
+          <!-- BM-6 Compositional Generalization Card -->
+          <div id="compositional-card" style="display: none; margin-top: 0.5rem; padding: 0.6rem 0.8rem; background: rgba(249, 115, 22, 0.07); border: 1px solid rgba(249, 115, 22, 0.25); border-radius: 6px; font-size: 0.75rem; font-family: 'JetBrains Mono';">
+            <div style="font-weight: 600; color: #fb923c; display: flex; justify-content: space-between;">
+              <span>🧩 BM-6 PRE-INTERACTION COMPOSITIONAL PREDICTION:</span>
+              <span id="bm6-badge" style="color: #4ade80;">DWMA > CATEGORICAL BASELINE</span>
+            </div>
+            <div id="bm6-readout" style="color: #cbd5e1; margin-top: 0.35rem; line-height: 1.4;"></div>
+          </div>
+
+          <!-- BM-7 Direction Reversal Card -->
+          <div id="reversal-card" style="display: none; margin-top: 0.5rem; padding: 0.6rem 0.8rem; background: rgba(236, 72, 153, 0.07); border: 1px solid rgba(236, 72, 153, 0.25); border-radius: 6px; font-size: 0.75rem; font-family: 'JetBrains Mono';">
+            <div style="font-weight: 600; color: #f472b6; display: flex; justify-content: space-between;">
+              <span>🧲 BM-7 INTERVENTION DIRECTION REVERSAL (POLARITY INVERSION):</span>
+              <span id="bm7-badge" style="color: #4ade80;">STATUS: MATRIX INVERTED</span>
+            </div>
+            <div id="bm7-readout" style="color: #cbd5e1; margin-top: 0.35rem; line-height: 1.4;"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quantitative Telemetry Row -->
+      <div class="telemetry-row">
+        <div class="tele-stat">
+          <div class="tele-label">DEVELOPMENT STEPS</div>
+          <div class="tele-val" id="stat-steps">0</div>
+        </div>
+        <div class="tele-stat">
+          <div class="tele-label">SURPRISE / CURIOSITY</div>
+          <div class="tele-val" id="stat-surprise" style="color: var(--accent-amber);">0.00</div>
+        </div>
+        <div class="tele-stat">
+          <div class="tele-label">PREDICTION ERROR (E)</div>
+          <div class="tele-val" id="stat-error" style="color: var(--accent-rose);">0.000</div>
+        </div>
+        <div class="tele-stat">
+          <div class="tele-label">DISCOVERED CONCEPTS</div>
+          <div class="tele-val" id="stat-concepts" style="color: var(--accent-green);">0</div>
+        </div>
+      </div>
+
+      <!-- Discovered Concepts Table -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">
+            <span>🔬 Emergent Physical Concepts (Learned without LLMs)</span>
+          </div>
+          <span style="font-size: 0.75rem; color: var(--text-dim); font-family: 'JetBrains Mono';">AUTONOMOUS DISCOVERY</span>
+        </div>
+        <table class="concepts-table">
+          <thead>
+            <tr>
+              <th>ENTITY</th>
+              <th>TOUCH COUNT</th>
+              <th>AVG MOBILITY</th>
+              <th>INFERRED PROTO-CONCEPT</th>
+            </tr>
+          </thead>
+          <tbody id="concepts-tbody">
+            <!-- Dynamically populated -->
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+
+    <!-- Right Column: Brain Internals & Cognitive Stream -->
+    <div class="sidebar-panel">
+
+      <!-- Live Predictive Error Curve -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">
+            <span>📉 Real-time Predictive Error &amp; Surprise</span>
+          </div>
+          <span style="font-size: 0.7rem; color: var(--accent-rose); font-family: 'JetBrains Mono';">PREDICTIVE CODING</span>
+        </div>
+        <div class="chart-wrapper">
+          <canvas id="metrics-canvas" width="400" height="125"></canvas>
+        </div>
+      </div>
+
+      <!-- Self-Model & Agency Discovery -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">
+            <span>🪞 Self-Model Tracker (Contingency Detection)</span>
+          </div>
+          <span style="font-size: 0.72rem; color: var(--accent-cyan); font-family: 'JetBrains Mono';" id="agency-label">AGENCY: 50%</span>
+        </div>
+        <div class="agency-meter-group">
+          <div class="meter-item">
+            <div class="meter-header">
+              <span>Motor Thrusters [Ego Actuator]</span>
+              <span id="meter-thruster-val">50%</span>
+            </div>
+            <div class="progress-bar-bg">
+              <div class="progress-bar-fill" id="meter-thruster-bar" style="width: 50%;"></div>
+            </div>
+          </div>
+          <div class="meter-item">
+            <div class="meter-header">
+              <span>Proprioceptive Position [Ego State]</span>
+              <span id="meter-proprio-val">50%</span>
+            </div>
+            <div class="progress-bar-bg">
+              <div class="progress-bar-fill" id="meter-proprio-bar" style="width: 50%;"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Causal Graph & Relationship Map -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">
+            <span>🕸️ Neuro-Symbolic Causal Network</span>
+          </div>
+          <span style="font-size: 0.7rem; color: var(--accent-purple); font-family: 'JetBrains Mono';" id="causal-rules-count">0 RULES</span>
+        </div>
+        <div style="height: 190px; width: 100%; border-radius: 8px; background: rgba(5, 8, 18, 0.6); overflow: hidden;">
+          <canvas id="causal-canvas" width="400" height="190"></canvas>
+        </div>
+      </div>
+
+      <!-- Proto-Language Grounding & Teaching Terminal -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">
+            <span>🗣️ Proto-Language (Ostensive Teaching)</span>
+          </div>
+          <span style="font-size: 0.7rem; color: var(--accent-amber); font-family: 'JetBrains Mono';" id="taught-words-count">0 WORDS</span>
+        </div>
+
+        <!-- Ostensive Teaching Form -->
+        <div style="background: rgba(255, 255, 255, 0.03); padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-color); display: flex; flex-direction: column; gap: 0.5rem;">
+          <div style="display: flex; align-items: center; justify-content: space-between; font-size: 0.75rem;">
+            <span style="color: var(--text-muted); font-family: 'JetBrains Mono';">POINT AT OBJECT:</span>
+            <select id="teach-entity-select" style="background: #0f172a; border: 1px solid var(--border-color); color: #fff; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem; outline: none;">
+              <!-- Populated dynamically -->
+            </select>
+          </div>
+          <div style="display: flex; gap: 0.4rem;">
+            <input type="text" id="teach-symbol-input" placeholder="e.g. BHAARI, KHILONA, TOOL, WALL..." style="flex: 1; background: #0b0f19; border: 1px solid var(--border-color); color: #fff; padding: 0.35rem 0.6rem; border-radius: 4px; font-size: 0.75rem; font-family: 'JetBrains Mono'; outline: none;">
+            <button class="primary-btn" id="btn-teach-symbol" style="padding: 0.35rem 0.75rem; font-size: 0.75rem; white-space: nowrap;">🏷️ Teach Word</button>
+          </div>
+        </div>
+
+        <!-- Taught Lexicon Chips & Query -->
+        <div style="margin-top: 0.6rem;">
+          <div style="font-size: 0.72rem; color: var(--text-dim); font-family: 'JetBrains Mono'; margin-bottom: 0.35rem;">TAUGHT WORDS (CLICK TO ASK "KAUN HAI?"):</div>
+          <div id="lexicon-chips-container" style="display: flex; flex-wrap: wrap; gap: 0.4rem; min-height: 28px;">
+            <span style="font-size: 0.72rem; color: var(--text-dim); font-style: italic;">No words taught yet. Point at an object and teach a word above!</span>
+          </div>
+        </div>
+
+        <!-- Query / Command Output Readout -->
+        <div id="language-terminal-output" style="margin-top: 0.6rem; padding: 0.5rem 0.75rem; background: rgba(0, 0, 0, 0.4); border-radius: 6px; border-left: 3px solid var(--accent-amber); font-size: 0.74rem; font-family: 'JetBrains Mono'; color: #fef08a; display: none;">
+          <!-- Live grounded answer -->
+        </div>
+
+        <div id="command-actions-row" style="margin-top: 0.5rem; display: none; gap: 0.5rem;">
+          <button class="secondary-btn" id="btn-cmd-push" style="flex: 1; font-size: 0.75rem; border-color: rgba(56, 189, 248, 0.4); color: #38bdf8;">👉 Command: PUSH THIS OBJECT</button>
+        </div>
+      </div>
+
+      <!-- Real-Time Cognitive Stream / Thoughts -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">
+            <span>💭 Internal Cognitive Stream</span>
+          </div>
+          <span style="font-size: 0.7rem; color: var(--text-dim); font-family: 'JetBrains Mono';">LIVE INTROSPECTION</span>
+        </div>
+        <div class="cognitive-feed" id="cognitive-feed">
+          <!-- Feed items appended here -->
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>

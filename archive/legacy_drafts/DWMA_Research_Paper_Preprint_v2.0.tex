@@ -1,0 +1,174 @@
+\documentclass[10pt,twocolumn,a4paper]{article}
+
+\usepackage[margin=0.75in]{geometry}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\usepackage{microtype}
+\usepackage{cite}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\usepackage{xcolor}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue!70!black,
+    citecolor=blue!70!black,
+    urlcolor=blue!70!black
+}
+
+\title{\textbf{DWMA: Autonomous Sensorimotor Structure Acquisition, Multi-Schema Retention, and Active Hypothesis Discrimination in an Embodied World Model}}
+
+\author{
+  \textbf{Kunal Lubhana}\thanks{Corresponding author: \texttt{research@dwma-project.org}} \\
+  \textit{Independent Research}
+}
+
+\date{September 2026 --- Version 2.0 Preprint}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+We introduce the \textbf{Developmental World-Model Agent (DWMA)}, an embodied computational architecture designed to acquire, maintain, and adaptively update predictive representations of interactive physical environments. Rather than relying on Large Language Models or static offline training corpuses, DWMA constructs grounded world models purely through online sensorimotor contingency, reafference cancellation, and epistemic active inference. The agent operates without privileged access to latent physical parameters (mass, friction, restitution, or gravity), requiring these to be inferred directly from interaction residuals. We report an audited four-phase evaluation across $N = 50$ deterministic seeds with $B = 10,000$ bootstrap resamples: (1) 7 baseline benchmarks reproduced ($8.8\times$ forecasting MSE reduction over persistence, Cohen's $d = 11.45$); (2) $A \to B \to C$ cross-world transfer and rapid online adaptation ($T_\epsilon = 16.32 \pm 0.62$ steps, $50/50$ pass); (3) continual multi-schema retention ($E_{A1} = 0.00500 \to E_{A2} = 0.00501$, $\mathcal{R} = 0.9901 \pm 0.0141$, $50/50$ pass vs. overwriter catastrophic forgetting $\mathcal{R} = -72.97$); and (4) active structural hypothesis discrimination (Kaplan-Meier median latency of $7.0$ steps with $0\%$ censoring vs. $23.0$ steps with $28\%$ right-censoring for random babbling; log-rank $\chi^2 = 92.28, p < 10^{-20}$).
+\end{abstract}
+
+\section{Introduction}
+Contemporary AI relies heavily on autoregressive sequence modeling over symbolic tokens. While effective for textual generation, tokens lack direct causal grounding to physical dynamics or motor reafference \cite{harnad1990,brooks1991,bender2020}. In contrast, biological developmental cognition demonstrates that infants acquire physical intuition through active sensorimotor manipulation, reafference cancellation, and uncertainty-directed play \cite{piaget1952,vonholst1950,friston2010,gopnik2012}. 
+
+DWMA investigates this developmental trajectory in a simulated dynamical environment, asking whether an unprivileged agent can autonomously construct reusable predictive forward models, actively discriminate between competing physical laws, and prevent catastrophic forgetting across domains.
+
+\section{Related Work}
+\textbf{World Models:} Model-based RL architectures such as DreamerV1--V3 \cite{hafner2020,hafner2023} and JEPA \cite{lecun2022} train latent representations from offline datasets. DWMA explores a compact, low-dimensional online formulation with real-time recursive estimation.
+
+\textbf{Active Inference \& Curiosity:} Active inference posits that agents select actions to fulfill expectations and resolve epistemic uncertainty \cite{friston2015,friston2017,buckley2021}. Intrinsic curiosity methods \cite{oudeyer2007,pathak2017,burda2018} reward prediction error; DWMA instead directs actions toward regions of maximal structural divergence ($\Delta(v) = |\hat{F}_1 - \hat{F}_2|$), avoiding stochastic noise traps.
+
+\textbf{Continual Learning:} Neural networks suffer catastrophic forgetting under sequential distribution shifts \cite{french1999,kirkpatrick2017}. Drawing inspiration from relational schema theory \cite{whittington2020}, DWMA maintains discrete dynamical schemas that are retrieved via Bayesian likelihood matching without catastrophic overwriting.
+
+\section{Architecture \& Formulations}
+At discrete time $t$, ego observation is $\mathbf{o}_t^{ego} = [x_t, y_t, v_{x,t}, v_{y,t}, \theta_t]^T \in \mathbb{R}^5$. Latents $m, e, \mu, g$ are strictly hidden. Continuous motor command $\mathbf{a}_t \in [-1, 1]^2$ generates physical thrust $\mathbf{F}_t = \alpha \mathbf{W}_{\text{act}} \mathbf{a}_t$ ($\alpha = 0.85$). 
+
+The forward model computes predicted acceleration $\hat{\Delta \mathbf{v}}_t = \hat{\alpha}_t \hat{\mathbf{W}}_t \mathbf{a}_t - \mathbf{v}_t (1 - \hat{\mu}_t)$. Motor reafference is isolated via:
+\begin{equation}
+\mathbf{a}_{\text{motor}, t} = \Delta \mathbf{v}_t + \mathbf{v}_t (1 - \hat{\mu}_t)
+\end{equation}
+Directional alignment accumulates as $\Lambda_t = \gamma \Lambda_{t-1} + (1 - \gamma) \cos(\theta_t)$ ($\gamma = 0.80$). When $\Lambda_t < -0.50$, the agent autonomously triggers structural polarity inversion $\hat{\mathbf{W}}_t \leftarrow -\hat{\mathbf{W}}_t$.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\linewidth]{figures/fig1_system_architecture.png}
+\caption{\textbf{DWMA Closed-Loop Architecture.} Sensorimotor loop, reafference cancellation, forward modeling, and multi-schema memory.}
+\label{fig:arch}
+\end{figure}
+
+\begin{algorithm}[h]
+\caption{Online Recursive Adaptation \& Polarity Inversion}
+\begin{algorithmic}[1]
+\STATE Forward predict: $\hat{\mathbf{v}}_{t+1} = \mathbf{v}_t + [\hat{\alpha}_t \hat{\mathbf{W}}_t \mathbf{a}_t - \mathbf{v}_t (1 - \hat{\mu}_t)] \Delta t$
+\STATE Execute $\mathbf{a}_t$; observe $\mathbf{v}_{t+1}$; error $\mathbf{e}_v = \mathbf{v}_{t+1} - \hat{\mathbf{v}}_{t+1}$
+\STATE Reafference cancellation: $\mathbf{a}_{\text{motor}} = \frac{\Delta \mathbf{v}}{\Delta t} + \mathbf{v}_t (1 - \hat{\mu}_t)$
+\STATE $\cos(\theta) = (\mathbf{a}_t \cdot \mathbf{a}_{\text{motor}}) / (\|\mathbf{a}_t\| \|\mathbf{a}_{\text{motor}}\|)$
+\STATE $\Lambda_t = 0.80 \Lambda_{t-1} + 0.20 \cos(\theta)$
+\IF{$\Lambda_t < -0.50$}
+    \STATE $\hat{\mathbf{W}}_{t+1} = -\hat{\mathbf{W}}_t$; $\Lambda_t = 0.0$
+\ENDIF
+\STATE $\hat{\mu}_{t+1} = \hat{\mu}_t + \eta \mathbf{e}_v \mathbf{v}_t$; $\hat{\alpha}_{t+1} = \hat{\alpha}_t + \eta \mathbf{e}_v (\hat{\mathbf{W}}_t \mathbf{a}_t)$
+\end{algorithmic}
+\end{algorithm}
+
+\section{Cross-World Transfer ($A \to B \to C$)}
+The agent was deployed across three worlds: World A ($\mu = 0.88, g = 9.8$), World B ($\mu = 0.71, \mathbf{W}_{\text{act}} = -\mathbf{I}, g = 4.2$), and World C ($\mu = 0.12, \mathbf{W}_{\text{act}} = 0.60\mathbf{I} \implies \alpha_{\text{eff}} = 0.51, g = 15.7$). Zero-shot transfer shocks were $1.3079 \pm 0.0421$ in B and $0.8117 \pm 0.0272$ in C. Online interaction in B restored error below $\epsilon = 0.20$ within $T_\epsilon = 16.32 \pm 0.62$ steps ($50/50$ pass).
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\linewidth]{figures/fig2_cross_world_adaptation.png}
+\caption{\textbf{Phase 2 Adaptation Trajectory.} Initial shock ($1.8491$), polarity inversion at step 7.0, and error collapse ($T_\epsilon = 16.32$).}
+\label{fig:adapt}
+\end{figure}
+
+\section{Continual Retention ($A \to B \to A$)}
+After adaptation in B, returning to A without retraining demonstrates near-zero error drift ($E_{A1} = 0.00500 \to E_{A2} = 0.00501$, retention index $\mathcal{R} = 0.9901 \pm 0.0141$, $50/50$ pass $\ge 0.75$). An overwriter baseline updating a single parameter set suffers catastrophic forgetting ($E_{A2} = 0.37460, \mathcal{R} = -72.97, 0/50$ pass).
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\linewidth]{figures/fig3_continual_retention.png}
+\caption{\textbf{Phase 3 Retention.} Full DWMA preserves prior models ($\mathcal{R}=0.9901$), while overwriter exhibits catastrophic forgetting.}
+\label{fig:ret}
+\end{figure}
+
+\section{Hypothesis Discrimination}
+Under true quadratic drag $F_{\text{true}}(v) = -0.08 v^2 \operatorname{sgn}(v)$, the agent discriminates between linear ($H_1$) and quadratic ($H_2$) models by targeting $\Delta(v) = |\hat{F}_1(v) - \hat{F}_2(v)|$. Model selection requires decisive evidence $\ln(B_{21}) > 10.0$.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\linewidth]{figures/fig4_hypothesis_survival_analysis.png}
+\caption{\textbf{Phase 4 Kaplan-Meier Survival Curves.} Epistemic policy achieves median latency of $7.0$ steps (0\% censored) vs. $23.0$ steps for random babbling (28\% right-censored; log-rank $\chi^2 = 92.28, p < 10^{-20}$).}
+\label{fig:surv}
+\end{figure}
+
+\section{Master Evaluation Matrix}
+Table~\ref{tab:master} presents the consolidated results across all four phases ($N=50$ seeds, $B=10,000$ bootstrap iterations).
+
+\begin{table}[h]
+\centering
+\scriptsize
+\caption{\textbf{Consolidated Empirical Results ($N=50$)}}
+\label{tab:master}
+\begin{tabular}{llcc}
+\toprule
+\textbf{Phase / Milestone} & \textbf{Primary Metric} & \textbf{Observed (Mean $\pm$ SD)} & \textbf{Pass Rate} \\
+\midrule
+BM-1 Zero-Shot & Gain & $85.82\% \pm 2.53\%$ & 49/50 (98\%) \\
+BM-2 Navigation & Steps to Goal & $23.10 \pm 2.46$ st & 50/50 (100\%) \\
+BM-3 Silent Drift & Shock MSE & $1.384 \pm 0.120$ & 50/50 (100\%) \\
+BM-4 Epistemic & Info Gain & $5.14 \pm 0.23$ nats & 50/50 (100\%) \\
+BM-5 Causal Repair & Error Ratio & $1.18 \pm 0.48$ px & 50/50 (100\%) \\
+BM-6 Composition & MSE & $0.119 \pm 0.075$ & 50/50 (100\%) \\
+BM-7 Polarity & Heading Alignment & $0.9915 \pm 0.0057$ & 48/50 (96\%) \\
+\midrule
+Phase 2 Transfer B & Shock MSE & $1.3079 \pm 0.0421$ & Shock \\
+Phase 2 Transfer C & Shock MSE & $0.8117 \pm 0.0272$ & Shock \\
+Phase 2 Adaptation & Latency $T_\epsilon$ & $16.32 \pm 0.62$ st & 50/50 (100\%) \\
+Phase 2 Adaptation & Rate $A_{\text{adapt}}$ & $0.0461 \pm 0.0084$ & 50/50 (100\%) \\
+\midrule
+Phase 3 Full DWMA & Error $E_{A1} \to E_{A2}$ & $0.00500 \to 0.00501$ & 50/50 ($R=0.99$) \\
+Phase 3 Overwriter & Error $E_{A1} \to E_{A2}$ & $0.00500 \to 0.37460$ & 0/50 (Fail) \\
+\midrule
+Phase 4 Epistemic & Evidence $\ln(B_{21})$ & $30.35 \pm 8.03$ & 50/50 (100\%) \\
+Phase 4 Random & Evidence $\ln(B_{21})$ & $20.02 \pm 14.34$ & 36/50 (72\%) \\
+Phase 4 KM Median & Epistemic vs Rnd & $7.0$ st vs $23.0$ st & $\chi^2 = 92.28$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Conclusion}
+DWMA provides empirical evidence that grounded, reusable, and adaptive predictive structure can be autonomously acquired and maintained through embodied sensorimotor interaction without relying on an LLM as its cognitive core.
+
+\begin{thebibliography}{99}
+\scriptsize
+\bibitem{harnad1990} S. Harnad, \textit{Physica D}, 1990.
+\bibitem{brooks1991} R. A. Brooks, \textit{Artificial Intelligence}, 1991.
+\bibitem{bender2020} E. M. Bender \& A. Koller, \textit{ACL}, 2020.
+\bibitem{piaget1952} J. Piaget, \textit{Origins of Intelligence}, 1952.
+\bibitem{vonholst1950} E. Von Holst \& H. Mittelstaedt, \textit{Naturwiss.}, 1950.
+\bibitem{friston2010} K. Friston, \textit{Nature Rev. Neurosci.}, 2010.
+\bibitem{gopnik2012} A. Gopnik, \textit{Science}, 2012.
+\bibitem{hafner2020} D. Hafner et al., \textit{ICLR}, 2020.
+\bibitem{hafner2023} D. Hafner et al., \textit{arXiv:2301.04104}, 2023.
+\bibitem{lecun2022} Y. LeCun, \textit{Open Review}, 2022.
+\bibitem{friston2015} K. Friston et al., \textit{Cognitive Neurosci.}, 2015.
+\bibitem{friston2017} K. Friston et al., \textit{Neural Comput.}, 2017.
+\bibitem{buckley2021} C. L. Buckley et al., \textit{J. Math. Psychol.}, 2021.
+\bibitem{oudeyer2007} P. Y. Oudeyer \& F. Kaplan, \textit{Front. Neurorobot.}, 2007.
+\bibitem{pathak2017} D. Pathak et al., \textit{ICML}, 2017.
+\bibitem{burda2018} Y. Burda et al., \textit{ICLR}, 2018.
+\bibitem{french1999} R. M. French, \textit{Trends Cogn. Sci.}, 1999.
+\bibitem{kirkpatrick2017} J. Kirkpatrick et al., \textit{PNAS}, 2017.
+\bibitem{whittington2020} J. C. Whittington et al., \textit{Cell}, 2020.
+\bibitem{kaplan1958} E. L. Kaplan \& P. Meier, \textit{JASA}, 1958.
+\bibitem{mantel1966} N. Mantel, \textit{Cancer Chemother. Rep.}, 1966.
+\end{thebibliography}
+
+\end{document}

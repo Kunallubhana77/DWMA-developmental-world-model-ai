@@ -1,0 +1,28 @@
+{
+  "experiment_name": "nonlinear_hypothesis_discrimination",
+  "version": "1.0.0",
+  "num_seeds": 50,
+  "interaction_budget": 30,
+  "bayes_factor_threshold": 10.0,
+  "environment": {
+    "ground_truth_law": "F_true(v) = -k_true * v^2 * sgn(v)",
+    "k_true": 0.08,
+    "observation_noise_sigma": 0.05,
+    "candidate_actions": [-1.0, -0.7, -0.4, 0.0, 0.4, 0.7, 1.0],
+    "velocity_bounds": [-8.0, 8.0]
+  },
+  "hypotheses": {
+    "H1": {
+      "name": "Linear Viscous Drag",
+      "formula": "F_1(v) = -k_1 * v"
+    },
+    "H2": {
+      "name": "Quadratic Aerodynamic Drag",
+      "formula": "F_2(v) = -k_2 * v^2 * sgn(v)"
+    }
+  },
+  "success_criteria": {
+    "min_log_bayes_factor": 10.0,
+    "max_discrimination_steps": 15
+  }
+}
